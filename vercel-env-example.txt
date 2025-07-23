@@ -1,0 +1,57 @@
+# 🔥 Variáveis de Ambiente para Vercel - Firebase
+
+## 📋 Variáveis Obrigatórias para Firebase:
+
+# ID do Projeto Firebase
+FIREBASE_PROJECT_ID=wrtmind
+
+# Credenciais de Serviço (Service Account)
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nSUA_CHAVE_PRIVADA_AQUI\n-----END PRIVATE KEY-----\n"
+
+# Email da Conta de Serviço
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@wrtmind.iam.gserviceaccount.com
+
+## 🔐 Variáveis de Segurança:
+
+# Chave JWT para autenticação
+JWT_SECRET=sua_chave_jwt_super_secreta_aqui
+
+# Chave de sessão
+SESSION_SECRET=sua_chave_sessao_super_secreta_aqui
+
+## 🌐 Configurações CORS:
+
+# URLs permitidas (separadas por vírgula)
+ALLOWED_ORIGINS=http://localhost:3000,https://wrtmind.vercel.app,https://wrt-frontend.vercel.app
+
+## 📊 Configurações de Rate Limiting:
+
+# Janela de tempo para rate limiting (em ms)
+RATE_LIMIT_WINDOW_MS=900000
+
+# Máximo de requisições por janela
+RATE_LIMIT_MAX_REQUESTS=100
+
+## 📝 Configurações de Log:
+
+# Nível de log
+LOG_LEVEL=info
+
+# Arquivo de log
+LOG_FILE=logs/app.log
+
+## 🚀 Como Configurar no Vercel:
+
+1. Acesse: https://vercel.com/dashboard
+2. Selecione seu projeto: wrt-back
+3. Vá para: Settings > Environment Variables
+4. Adicione cada variável acima
+5. Clique em "Save"
+6. Faça redeploy do projeto
+
+## ⚠️ Importante:
+
+- A FIREBASE_PRIVATE_KEY deve incluir as quebras de linha (\n)
+- Use aspas duplas para valores com caracteres especiais
+- Nunca commite essas variáveis no Git
+- Mantenha as credenciais seguras 
