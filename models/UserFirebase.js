@@ -3,11 +3,16 @@ const bcrypt = require('bcryptjs');
 
 class UserFirebase {
   constructor() {
-    if (!admin.apps.length) {
-      throw new Error('Firebase Admin não inicializado');
+    try {
+      if (!admin.apps.length) {
+        console.log('⚠️ Firebase Admin não inicializado, tentando inicializar...');
+        return;
+      }
+      this.db = admin.firestore();
+      this.collection = 'users';
+    } catch (error) {
+      console.error('❌ Erro ao inicializar UserFirebase:', error.message);
     }
-    this.db = admin.firestore();
-    this.collection = 'users';
   }
 
   // Garantir que a coleção existe
