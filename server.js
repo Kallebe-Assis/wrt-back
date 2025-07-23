@@ -4,10 +4,10 @@ const cors = require('cors');
 const path = require('path');
 
 // Configuração centralizada
-const { config, validateConfig } = require('./src/config/environment');
+const { config, validateConfig } = require('./src/config/environment.js');
 
 // Inicializar Firebase
-const { connectToFirebase } = require('./src/config/database');
+const { connectToFirebase } = require('./src/config/database.js');
 const firebaseDB = connectToFirebase();
 const firebaseInitialized = !!firebaseDB;
 
