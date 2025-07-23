@@ -1,0 +1,46 @@
+{
+  "links": [
+    {
+      "id": "1",
+      "nome": "Google",
+      "urlIcone": "https://www.google.com/favicon.ico",
+      "urlDestino": "https://www.google.com",
+      "posicao": 100,
+      "dataCriacao": "2025-07-21T11:12:02.856Z",
+      "dataModificacao": "2025-07-21T11:14:40.039Z",
+      "ativo": true
+    },
+    {
+      "id": "2",
+      "nome": "YouTube",
+      "urlIcone": "https://www.youtube.com/favicon.ico",
+      "urlDestino": "https://www.youtube.com",
+      "posicao": 101,
+      "dataCriacao": "2025-07-21T11:12:02.863Z",
+      "dataModificacao": "2025-07-21T11:14:40.039Z",
+      "ativo": true
+    },
+    {
+      "id": "3",
+      "nome": "GitHub",
+      "urlIcone": "https://github.com/favicon.ico",
+      "urlDestino": "https://github.com",
+      "posicao": 102,
+      "dataCriacao": "2025-07-21T11:12:02.863Z",
+      "dataModificacao": "2025-07-21T11:14:40.039Z",
+      "ativo": true
+    },
+    {
+      "id": "4",
+      "nome": "Teste Persistência - Atualizado",
+      "urlIcone": "https://example.com/favicon.ico",
+      "urlDestino": "https://example.com/updated",
+      "posicao": 110,
+      "dataCriacao": "2025-07-21T11:14:40.020Z",
+      "dataModificacao": "2025-07-21T11:14:40.039Z",
+      "ativo": true
+    }
+  ],
+  "nextId": 5,
+  "lastUpdate": "2025-07-21T11:14:40.039Z"
+}
