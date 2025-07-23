@@ -184,4 +184,12 @@ router.put('/perfil/:id', [
   }
 });
 
+// GET /api/auth/test - Endpoint de teste
+router.get('/test', (req, res) => {
+  res.json({ 
+    message: 'Rota de auth funcionando!',
+    timestamp: new Date().toISOString()
+  });
+});
+
 module.exports = router; 
