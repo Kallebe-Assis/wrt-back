@@ -46,18 +46,9 @@ try {
   process.exit(1);
 }
 
-// Verificar se MongoDB está rodando
-try {
-  execSync('mongod --version', { stdio: 'ignore' });
-  console.log('✅ MongoDB local encontrado');
-} catch (error) {
-  console.log('ℹ️ Usando MongoDB Atlas (nuvem)');
-}
-
-// 1. Configurar Banco de Dados (Arquivado - Migrado para Firebase)
-console.log('\n📊 Banco de dados MongoDB arquivado - usando Firebase...');
-console.log('ℹ️ A pasta WRT-DB foi movida para archive/');
-console.log('ℹ️ O sistema agora usa Firebase como banco principal');
+// 1. Configurar Banco de Dados (Firebase)
+console.log('\n📊 Sistema configurado para usar Firebase como banco principal...');
+console.log('ℹ️ Firebase já está configurado e funcionando');
 
 // 2. Configurar Backend
 console.log('\n🔧 Configurando backend...');

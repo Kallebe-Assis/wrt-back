@@ -26,14 +26,14 @@ Configurar credenciais reais do Firebase para que a sincronização funcione com
 
 ```env
 # Configurações do Firebase
-FIREBASE_PROJECT_ID=wrtmin
-FIREBASE_DATABASE_URL=https://wrtmin.firebaseio.com
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_DATABASE_URL=https://your-project-id.firebaseio.com
 FIREBASE_API_KEY=your-api-key-here
-FIREBASE_AUTH_DOMAIN=wrtmin.firebaseapp.com
-FIREBASE_STORAGE_BUCKET=wrtmin.firebasestorage.app
-FIREBASE_MESSAGING_SENDER_ID=86110752542
-FIREBASE_APP_ID=1:86110752542:web:6ee0a36d3e6f32da40c30f
-FIREBASE_MEASUREMENT_ID=G-9X9077B6WE
+FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+FIREBASE_STORAGE_BUCKET=your-project-id.firebasestorage.app
+FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+FIREBASE_APP_ID=your-app-id
+FIREBASE_MEASUREMENT_ID=your-measurement-id
 
 # Credenciais de Serviço
 GOOGLE_APPLICATION_CREDENTIALS=./wrtmin-service-account.json

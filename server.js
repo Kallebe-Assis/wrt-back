@@ -3,17 +3,13 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-// Inicializar Firebase apenas se as credenciais existirem
-let firebaseInitialized = false;
-try {
-  const { initializeFirebase } = require('./config/firebase');
-  initializeFirebase();
-  firebaseInitialized = true;
-  console.log('✅ Firebase inicializado com sucesso');
-} catch (error) {
-  console.log('⚠️ Firebase não inicializado:', error.message);
-  console.log('📝 Para usar Firebase, configure as credenciais');
-}
+// Configuração centralizada
+const { config, validateConfig } = require('./src/config/environment');
+
+// Inicializar Firebase
+const { connectToFirebase } = require('./src/config/database');
+const firebaseDB = connectToFirebase();
+const firebaseInitialized = !!firebaseDB;
 
 // Importar rotas apenas se Firebase estiver disponível
 let authRoutes, linksRoutes, syncRoutes, notasRoutes, categoriasRoutes, logsRoutes, adminRoutes;
@@ -33,11 +29,14 @@ if (firebaseInitialized) {
 }
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = config.PORT;
+
+// Validar configuração
+validateConfig();
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://wrtmind.vercel.app', 'https://wrt-frontend.vercel.app'],
+  origin: config.ALLOWED_ORIGINS,
   credentials: true
 }));
 
@@ -64,7 +63,7 @@ app.get('/api/health', (req, res) => {
     status: 'OK', 
     message: 'WRTmind Backend API funcionando!',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development',
+    environment: config.NODE_ENV,
     firebase: firebaseInitialized ? 'connected' : 'not_configured'
   });
 });
