@@ -1,0 +1,40 @@
+# Arquivos de credenciais
+wrtmin-service-account.json
+config.env
+*.key
+*.pem
+
+# Logs
+*.log
+logs/
+
+# Dados locais
+data/
+*.json.bak
+
+# Arquivos de desenvolvimento
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentação
+docs/
+*.md
+!README.md
+
+# Scripts de desenvolvimento
+scripts/
+setup-credentials.js
+setup.js
+start-backend.ps1
+
+# Arquivos de exemplo
+*.example.*
+
+# Git
+.git/
+.gitignore
+
+# Node modules (serão instalados na Vercel)
+node_modules/ 

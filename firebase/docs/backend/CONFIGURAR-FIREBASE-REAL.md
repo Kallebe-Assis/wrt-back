@@ -28,7 +28,7 @@ Configurar credenciais reais do Firebase para que a sincronização funcione com
 # Configurações do Firebase
 FIREBASE_PROJECT_ID=wrtmin
 FIREBASE_DATABASE_URL=https://wrtmin.firebaseio.com
-FIREBASE_API_KEY=AIzaSyCWsBJrqCCsm5LM70KX17VYKnT8ml_1KZQ
+FIREBASE_API_KEY=your-api-key-here
 FIREBASE_AUTH_DOMAIN=wrtmin.firebaseapp.com
 FIREBASE_STORAGE_BUCKET=wrtmin.firebasestorage.app
 FIREBASE_MESSAGING_SENDER_ID=86110752542
