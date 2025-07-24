@@ -11,36 +11,121 @@ export default function handler(req, res) {
   }
 
   const { method } = req;
+  const userId = req.headers['user-id'];
+
+  // Dados mock específicos do usuário
+  const mockCategorias = {
+    'user1': [
+      {
+        id: 1,
+        nome: 'Geral',
+        cor: '#007bff',
+        userId: 'user1',
+        deletedAt: null,
+        createdAt: '2025-01-15T10:00:00.000Z',
+        updatedAt: '2025-01-15T10:00:00.000Z'
+      },
+      {
+        id: 2,
+        nome: 'Desenvolvimento',
+        cor: '#28a745',
+        userId: 'user1',
+        deletedAt: null,
+        createdAt: '2025-01-16T11:00:00.000Z',
+        updatedAt: '2025-01-16T11:00:00.000Z'
+      },
+      {
+        id: 3,
+        nome: 'Tarefas',
+        cor: '#ffc107',
+        userId: 'user1',
+        deletedAt: null,
+        createdAt: '2025-01-17T12:00:00.000Z',
+        updatedAt: '2025-01-17T12:00:00.000Z'
+      },
+      {
+        id: 4,
+        nome: 'Projetos',
+        cor: '#dc3545',
+        userId: 'user1',
+        deletedAt: null,
+        createdAt: '2025-01-18T13:00:00.000Z',
+        updatedAt: '2025-01-18T13:00:00.000Z'
+      }
+    ],
+    'user2': [
+      {
+        id: 5,
+        nome: 'Pessoal',
+        cor: '#6f42c1',
+        userId: 'user2',
+        deletedAt: null,
+        createdAt: '2025-01-19T14:00:00.000Z',
+        updatedAt: '2025-01-19T14:00:00.000Z'
+      },
+      {
+        id: 6,
+        nome: 'Trabalho',
+        cor: '#fd7e14',
+        userId: 'user2',
+        deletedAt: null,
+        createdAt: '2025-01-20T15:00:00.000Z',
+        updatedAt: '2025-01-20T15:00:00.000Z'
+      }
+    ]
+  };
 
   try {
     switch (method) {
       case 'GET':
-        // Buscar todas as categorias
+        // Buscar todas as categorias do usuário
+        if (!userId) {
+          return res.status(400).json({
+            success: false,
+            error: 'User ID não fornecido',
+            message: 'Header user-id é obrigatório'
+          });
+        }
+
+        const userCategorias = mockCategorias[userId] || [];
+        
         res.status(200).json({
           success: true,
-          data: [
-            {
-              id: 1,
-              nome: 'Geral',
-              cor: '#007bff',
-              createdAt: new Date().toISOString()
-            }
-          ],
-          message: 'Lista de categorias (mock)',
+          data: userCategorias,
+          message: `Categorias do usuário ${userId}`,
+          count: userCategorias.length,
           timestamp: new Date().toISOString()
         });
         break;
 
       case 'POST':
         // Criar nova categoria
+        if (!userId) {
+          return res.status(400).json({
+            success: false,
+            error: 'User ID não fornecido',
+            message: 'Header user-id é obrigatório'
+          });
+        }
+
+        const newCategoria = {
+          id: Date.now(),
+          ...req.body,
+          userId: userId,
+          deletedAt: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+
+        // Adicionar à lista mock (em produção seria salvo no banco)
+        if (!mockCategorias[userId]) {
+          mockCategorias[userId] = [];
+        }
+        mockCategorias[userId].push(newCategoria);
+
         res.status(201).json({
           success: true,
-          data: {
-            id: Date.now(),
-            ...req.body,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          },
+          data: newCategoria,
           message: 'Categoria criada com sucesso'
         });
         break;
