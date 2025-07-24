@@ -122,7 +122,12 @@ app.use('*', (req, res) => {
   const error = new Error(`Rota não encontrada: ${req.originalUrl}`);
   error.status = 404;
   error.code = 'NOT_FOUND';
-  next(error);
+  res.status(404).json({
+    error: 'Rota não encontrada',
+    message: `A rota ${req.originalUrl} não existe`,
+    code: 'NOT_FOUND',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Middleware de tratamento de erros (DEVE ser o último middleware)
