@@ -81,6 +81,38 @@ router.get('/topicos', async (req, res) => {
   }
 });
 
+// GET /api/notas/favoritas - Buscar notas favoritas
+router.get('/favoritas', async (req, res) => {
+  try {
+    const userId = req.headers['user-id'];
+    if (!userId) {
+      return res.status(401).json({ error: 'ID do usuário não fornecido' });
+    }
+    
+    const notas = await notaModel.buscarFavoritas(userId);
+    res.json({ notas });
+  } catch (error) {
+    console.error('Erro ao buscar notas favoritas:', error);
+    res.status(500).json({ error: 'Erro ao buscar notas favoritas' });
+  }
+});
+
+// GET /api/notas/fixadas - Buscar notas fixadas
+router.get('/fixadas', async (req, res) => {
+  try {
+    const userId = req.headers['user-id'];
+    if (!userId) {
+      return res.status(401).json({ error: 'ID do usuário não fornecido' });
+    }
+    
+    const notas = await notaModel.buscarFixadas(userId);
+    res.json({ notas });
+  } catch (error) {
+    console.error('Erro ao buscar notas fixadas:', error);
+    res.status(500).json({ error: 'Erro ao buscar notas fixadas' });
+  }
+});
+
 // GET /api/notas/:id - Buscar nota por ID
 router.get('/:id', async (req, res) => {
   try {
@@ -355,38 +387,6 @@ router.put('/ordenacoes', async (req, res) => {
   } catch (error) {
     console.error('Erro ao atualizar ordenações:', error);
     res.status(500).json({ error: 'Erro interno do servidor' });
-  }
-});
-
-// GET /api/notas/favoritas - Buscar notas favoritas
-router.get('/favoritas', async (req, res) => {
-  try {
-    const userId = req.headers['user-id'];
-    if (!userId) {
-      return res.status(401).json({ error: 'ID do usuário não fornecido' });
-    }
-    
-    const notas = await notaModel.buscarFavoritas(userId);
-    res.json({ notas });
-  } catch (error) {
-    console.error('Erro ao buscar notas favoritas:', error);
-    res.status(500).json({ error: 'Erro ao buscar notas favoritas' });
-  }
-});
-
-// GET /api/notas/fixadas - Buscar notas fixadas
-router.get('/fixadas', async (req, res) => {
-  try {
-    const userId = req.headers['user-id'];
-    if (!userId) {
-      return res.status(401).json({ error: 'ID do usuário não fornecido' });
-    }
-    
-    const notas = await notaModel.buscarFixadas(userId);
-    res.json({ notas });
-  } catch (error) {
-    console.error('Erro ao buscar notas fixadas:', error);
-    res.status(500).json({ error: 'Erro ao buscar notas fixadas' });
   }
 });
 

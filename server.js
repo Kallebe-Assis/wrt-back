@@ -3,6 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+// Sistema de tratamento de erros
+const { errorHandler, catchUnhandledErrors } = require('./middleware/errorHandler');
+const { asyncHandler } = require('./middleware/asyncHandler');
+
 // Configuração centralizada
 const { config, validateConfig } = require('./src/config/environment.js');
 
@@ -12,7 +16,7 @@ const firebaseDB = connectToFirebase();
 const firebaseInitialized = !!firebaseDB;
 
 // Importar rotas apenas se Firebase estiver disponível
-let authRoutes, linksRoutes, syncRoutes, notasRoutes, categoriasRoutes, logsRoutes, adminRoutes;
+let authRoutes, linksRoutes, syncRoutes, notasRoutes, categoriasRoutes, logsRoutes, adminRoutes, errorRoutes;
 
 if (firebaseInitialized) {
   try {
@@ -23,6 +27,7 @@ if (firebaseInitialized) {
     categoriasRoutes = require('./routes/categorias');
     logsRoutes = require('./routes/logs');
     adminRoutes = require('./routes/admin');
+    errorRoutes = require('./routes/errorRoutes');
   } catch (error) {
     console.log('⚠️ Algumas rotas não puderam ser carregadas:', error.message);
   }
@@ -52,6 +57,7 @@ if (firebaseInitialized && authRoutes) {
   app.use('/api/categorias', categoriasRoutes);
   app.use('/api/logs', logsRoutes);
   app.use('/api/admin', adminRoutes);
+  app.use('/api/errors', errorRoutes);
   console.log('✅ Rotas da API carregadas');
 } else {
   console.log('⚠️ Rotas da API não carregadas - Firebase não disponível');
@@ -111,18 +117,25 @@ app.get('/', (req, res) => {
   });
 });
 
-// Tratamento de erros global
-process.on('uncaughtException', (error) => {
-  console.error('Erro não capturado:', error);
+// Rota 404 - Página não encontrada
+app.use('*', (req, res) => {
+  const error = new Error(`Rota não encontrada: ${req.originalUrl}`);
+  error.status = 404;
+  error.code = 'NOT_FOUND';
+  next(error);
 });
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Promise rejeitada não tratada:', reason);
-});
+// Middleware de tratamento de erros (DEVE ser o último middleware)
+app.use(errorHandler);
+
+// Capturar erros não tratados do processo
+catchUnhandledErrors();
 
 // Iniciar servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
   console.log(`📡 API disponível em: http://localhost:${PORT}/api`);
   console.log(`🔧 Firebase: ${firebaseInitialized ? 'Conectado' : 'Não configurado'}`);
+  console.log(`🚨 Sistema de tratamento de erros ativo`);
+  console.log(`📊 Dashboard de erros: http://localhost:${PORT}/api/errors/dashboard`);
 }); 
