@@ -70,6 +70,73 @@ export default function handler(req, res) {
         createdAt: '2025-01-18T13:00:00.000Z',
         updatedAt: '2025-01-18T13:00:00.000Z'
       }
+    ],
+    'kallebe': [
+      {
+        id: 5,
+        titulo: 'Ideias para WRTmind',
+        conteudo: 'Funcionalidades para implementar:\n- Sistema de tags\n- Busca avançada\n- Exportação de dados\n- Temas personalizáveis\n- Sincronização em tempo real',
+        categoria: 'Projetos',
+        fixado: true,
+        favorito: true,
+        ordenacao: 1,
+        userId: 'kallebe',
+        deletedAt: null,
+        createdAt: '2025-01-10T09:00:00.000Z',
+        updatedAt: '2025-01-10T09:00:00.000Z'
+      },
+      {
+        id: 6,
+        titulo: 'Tarefas G2 Telecom',
+        conteudo: '1. Reunião com cliente às 14h\n2. Revisar proposta comercial\n3. Atualizar documentação técnica\n4. Preparar apresentação para amanhã',
+        categoria: 'Trabalho',
+        fixado: true,
+        favorito: false,
+        ordenacao: 2,
+        userId: 'kallebe',
+        deletedAt: null,
+        createdAt: '2025-01-11T10:00:00.000Z',
+        updatedAt: '2025-01-11T10:00:00.000Z'
+      },
+      {
+        id: 7,
+        titulo: 'Comandos Git úteis',
+        conteudo: 'git add .\ngit commit -m "mensagem"\ngit push origin main\ngit pull origin main\ngit status\ngit log --oneline',
+        categoria: 'Desenvolvimento',
+        fixado: false,
+        favorito: true,
+        ordenacao: 3,
+        userId: 'kallebe',
+        deletedAt: null,
+        createdAt: '2025-01-12T11:00:00.000Z',
+        updatedAt: '2025-01-12T11:00:00.000Z'
+      },
+      {
+        id: 8,
+        titulo: 'Links importantes',
+        conteudo: 'Documentação React: https://react.dev\nVercel: https://vercel.com\nGitHub: https://github.com\nStack Overflow: https://stackoverflow.com',
+        categoria: 'Referência',
+        fixado: false,
+        favorito: false,
+        ordenacao: 4,
+        userId: 'kallebe',
+        deletedAt: null,
+        createdAt: '2025-01-13T12:00:00.000Z',
+        updatedAt: '2025-01-13T12:00:00.000Z'
+      },
+      {
+        id: 9,
+        titulo: 'Lembretes pessoais',
+        conteudo: '- Pagar conta de luz\n- Marcar consulta médica\n- Comprar presente para aniversário\n- Reservar restaurante para sábado',
+        categoria: 'Pessoal',
+        fixado: false,
+        favorito: false,
+        ordenacao: 5,
+        userId: 'kallebe',
+        deletedAt: null,
+        createdAt: '2025-01-14T13:00:00.000Z',
+        updatedAt: '2025-01-14T13:00:00.000Z'
+      }
     ]
   };
 

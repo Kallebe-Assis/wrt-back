@@ -66,6 +66,68 @@ export default function handler(req, res) {
         createdAt: '2025-01-18T13:00:00.000Z',
         updatedAt: '2025-01-18T13:00:00.000Z'
       }
+    ],
+    'kallebe': [
+      {
+        id: 5,
+        titulo: 'G2 Telecom',
+        url: 'https://g2telecom.com.br',
+        descricao: 'Site da empresa G2 Telecom',
+        categoria: 'Trabalho',
+        favorito: true,
+        posicao: 1,
+        userId: 'kallebe',
+        createdAt: '2025-01-10T09:00:00.000Z',
+        updatedAt: '2025-01-10T09:00:00.000Z'
+      },
+      {
+        id: 6,
+        titulo: 'LinkedIn',
+        url: 'https://linkedin.com',
+        descricao: 'Rede profissional',
+        categoria: 'Trabalho',
+        favorito: true,
+        posicao: 2,
+        userId: 'kallebe',
+        createdAt: '2025-01-11T10:00:00.000Z',
+        updatedAt: '2025-01-11T10:00:00.000Z'
+      },
+      {
+        id: 7,
+        titulo: 'GitHub',
+        url: 'https://github.com',
+        descricao: 'Repositório de código',
+        categoria: 'Desenvolvimento',
+        favorito: false,
+        posicao: 3,
+        userId: 'kallebe',
+        createdAt: '2025-01-12T11:00:00.000Z',
+        updatedAt: '2025-01-12T11:00:00.000Z'
+      },
+      {
+        id: 8,
+        titulo: 'Stack Overflow',
+        url: 'https://stackoverflow.com',
+        descricao: 'Comunidade de programadores',
+        categoria: 'Desenvolvimento',
+        favorito: false,
+        posicao: 4,
+        userId: 'kallebe',
+        createdAt: '2025-01-13T12:00:00.000Z',
+        updatedAt: '2025-01-13T12:00:00.000Z'
+      },
+      {
+        id: 9,
+        titulo: 'Vercel',
+        url: 'https://vercel.com',
+        descricao: 'Plataforma de deploy',
+        categoria: 'Desenvolvimento',
+        favorito: true,
+        posicao: 5,
+        userId: 'kallebe',
+        createdAt: '2025-01-14T13:00:00.000Z',
+        updatedAt: '2025-01-14T13:00:00.000Z'
+      }
     ]
   };
 

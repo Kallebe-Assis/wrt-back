@@ -64,6 +64,12 @@ export default function handler(req, res) {
         name: 'Usuário Teste 1',
         email: 'teste@wrtmind.com',
         password: '123456'
+      },
+      'kallebe@g2telecom.com.br': {
+        id: 'kallebe',
+        name: 'Kallebe',
+        email: 'kallebe@g2telecom.com.br',
+        password: '123456'
       }
     };
 

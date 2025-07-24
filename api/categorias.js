@@ -72,6 +72,53 @@ export default function handler(req, res) {
         createdAt: '2025-01-20T15:00:00.000Z',
         updatedAt: '2025-01-20T15:00:00.000Z'
       }
+    ],
+    'kallebe': [
+      {
+        id: 7,
+        nome: 'Trabalho',
+        cor: '#007bff',
+        userId: 'kallebe',
+        deletedAt: null,
+        createdAt: '2025-01-10T09:00:00.000Z',
+        updatedAt: '2025-01-10T09:00:00.000Z'
+      },
+      {
+        id: 8,
+        nome: 'Desenvolvimento',
+        cor: '#28a745',
+        userId: 'kallebe',
+        deletedAt: null,
+        createdAt: '2025-01-11T10:00:00.000Z',
+        updatedAt: '2025-01-11T10:00:00.000Z'
+      },
+      {
+        id: 9,
+        nome: 'Projetos',
+        cor: '#dc3545',
+        userId: 'kallebe',
+        deletedAt: null,
+        createdAt: '2025-01-12T11:00:00.000Z',
+        updatedAt: '2025-01-12T11:00:00.000Z'
+      },
+      {
+        id: 10,
+        nome: 'Referência',
+        cor: '#6f42c1',
+        userId: 'kallebe',
+        deletedAt: null,
+        createdAt: '2025-01-13T12:00:00.000Z',
+        updatedAt: '2025-01-13T12:00:00.000Z'
+      },
+      {
+        id: 11,
+        nome: 'Pessoal',
+        cor: '#fd7e14',
+        userId: 'kallebe',
+        deletedAt: null,
+        createdAt: '2025-01-14T13:00:00.000Z',
+        updatedAt: '2025-01-14T13:00:00.000Z'
+      }
     ]
   };
 

@@ -52,7 +52,7 @@ export default function handler(req, res) {
     }
 
     // Simular verificação se o email já existe
-    const existingEmails = ['user1@test.com', 'user2@test.com', 'teste@wrtmind.com'];
+    const existingEmails = ['user1@test.com', 'user2@test.com', 'teste@wrtmind.com', 'kallebe@g2telecom.com.br'];
     if (existingEmails.includes(email)) {
       return res.status(409).json({
         success: false,
