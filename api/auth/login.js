@@ -21,13 +21,27 @@ export default function handler(req, res) {
       });
     }
 
-    const { email, password } = req.body;
+    // Logs de debug
+    console.log('🔍 Login - Headers:', req.headers);
+    console.log('🔍 Login - Body:', req.body);
+    console.log('🔍 Login - Body type:', typeof req.body);
 
-    // Validação básica
-    if (!email || !password) {
+    const { email, password, senha } = req.body;
+
+    // Logs de debug dos campos
+    console.log('🔍 Login - Email:', email);
+    console.log('🔍 Login - Password:', password);
+    console.log('🔍 Login - Senha:', senha);
+
+    // Validação básica - aceitar tanto 'password' quanto 'senha'
+    const userPassword = password || senha;
+    
+    if (!email || !userPassword) {
+      console.log('❌ Login - Validação falhou:', { email, userPassword });
       return res.status(400).json({
         success: false,
-        error: 'Email e senha são obrigatórios'
+        error: 'Email e senha são obrigatórios',
+        received: { email, hasPassword: !!userPassword }
       });
     }
 
@@ -44,13 +58,20 @@ export default function handler(req, res) {
         name: 'Usuário Teste 2',
         email: 'user2@test.com',
         password: '123456'
+      },
+      'teste@wrtmind.com': {
+        id: 'user1',
+        name: 'Usuário Teste 1',
+        email: 'teste@wrtmind.com',
+        password: '123456'
       }
     };
 
     const user = mockUsers[email];
 
     // Verificar se o usuário existe e a senha está correta
-    if (!user || user.password !== password) {
+    if (!user || user.password !== userPassword) {
+      console.log('❌ Login - Credenciais inválidas:', { email, userPassword, userExists: !!user });
       return res.status(401).json({
         success: false,
         error: 'Email ou senha inválidos'
@@ -63,6 +84,8 @@ export default function handler(req, res) {
     // Retornar dados do usuário (sem a senha) e token
     const { password: _, ...userData } = user;
 
+    console.log('✅ Login - Sucesso:', { email, userId: user.id });
+
     res.status(200).json({
       success: true,
       data: {
@@ -73,7 +96,7 @@ export default function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Erro no endpoint /auth/login:', error);
+    console.error('❌ Erro no endpoint /auth/login:', error);
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor',
