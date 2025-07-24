@@ -2,7 +2,7 @@ const admin = require('firebase-admin');
 const path = require('path');
 
 // Inicializar Firebase Admin SDK
-const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || './wrtmin-service-account.json';
+const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || '../wrtmind-firebase-adminsdk-fbsvc-f96a42c84b.json';
 
 try {
   const serviceAccount = require(path.resolve(serviceAccountPath));
@@ -64,10 +64,10 @@ async function checkNotesStatus() {
         withoutUserId++;
       }
       
-      // Contar favoritas e fixadas
-      if (noteData.favorito) {
-        favoritedNotes++;
-      }
+      // Contar favoritas e fixadas (DESABILITADO)
+      // if (noteData.favorito) {
+      //   favoritedNotes++;
+      // }
       if (noteData.fixado) {
         pinnedNotes++;
       }
@@ -78,7 +78,7 @@ async function checkNotesStatus() {
     console.log(`   Notas sem userId: ${withoutUserId}`);
     console.log(`   Notas ativas: ${activeNotes}`);
     console.log(`   Notas inativas: ${inactiveNotes}`);
-    console.log(`   Notas favoritas: ${favoritedNotes}`);
+    console.log(`   Notas favoritas: ${favoritedNotes} (DESABILITADO)`);
     console.log(`   Notas fixadas: ${pinnedNotes}`);
     console.log(`   Notas com userId padrão: ${defaultUserIdNotes}`);
     

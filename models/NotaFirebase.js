@@ -42,10 +42,10 @@ class NotaFirebase {
         query = query.where('topico', '==', filtros.topico);
         console.log('🔍 Firebase - Filtro tópico aplicado:', filtros.topico);
       }
-      if (filtros.favorito !== undefined) {
-        query = query.where('favorito', '==', filtros.favorito);
-        console.log('🔍 Firebase - Filtro favorito aplicado:', filtros.favorito);
-      }
+      // if (filtros.favorito !== undefined) {
+      //   query = query.where('favorito', '==', filtros.favorito);
+      //   console.log('🔍 Firebase - Filtro favorito aplicado:', filtros.favorito);
+      // }
       if (filtros.fixado !== undefined) {
         query = query.where('fixado', '==', filtros.fixado);
         console.log('🔍 Firebase - Filtro fixado aplicado:', filtros.fixado);
@@ -129,7 +129,7 @@ class NotaFirebase {
         dataCriacao: new Date().toISOString(),
         dataAtualizacao: new Date().toISOString(),
         ativo: true,
-        favorito: false,
+        // favorito: false, // DESABILITADO
         fixado: false,
         ordenacao: 0
       };
@@ -299,9 +299,9 @@ class NotaFirebase {
       if (filtros.topico) {
         query = query.where('topico', '==', filtros.topico);
       }
-      if (filtros.favorito !== undefined) {
-        query = query.where('favorito', '==', filtros.favorito);
-      }
+      // if (filtros.favorito !== undefined) {
+      //   query = query.where('favorito', '==', filtros.favorito);
+      // }
       if (filtros.fixado !== undefined) {
         query = query.where('fixado', '==', filtros.fixado);
       }
@@ -314,26 +314,26 @@ class NotaFirebase {
     }
   }
 
-  // Alternar favorito
-  async alternarFavorito(id, userId) {
-    try {
-      const nota = await this.buscarPorId(id, userId);
-      if (!nota) {
-        throw new Error('Nota não encontrada ou não autorizada');
-      }
+  // Alternar favorito (DESABILITADO)
+  // async alternarFavorito(id, userId) {
+  //   try {
+  //     const nota = await this.buscarPorId(id, userId);
+  //     if (!nota) {
+  //       throw new Error('Nota não encontrada ou não autorizada');
+  //     }
 
-      const novoFavorito = !nota.favorito;
-      await this.db.collection(this.collection).doc(id).update({
-        favorito: novoFavorito,
-        dataModificacao: new Date().toISOString()
-      });
+  //     const novoFavorito = !nota.favorito;
+  //     await this.db.collection(this.collection).doc(id).update({
+  //       favorito: novoFavorito,
+  //       dataModificacao: new Date().toISOString()
+  //     });
 
-      return { ...nota, favorito: novoFavorito };
-    } catch (error) {
-      console.error('Erro ao alternar favorito:', error.message);
-      throw error;
-    }
-  }
+  //     return { ...nota, favorito: novoFavorito };
+  //   } catch (error) {
+  //     console.error('Erro ao alternar favorito:', error.message);
+  //     throw error;
+  //   }
+  // }
 
   // Alternar fixado
   async alternarFixado(id, userId) {
@@ -403,10 +403,10 @@ class NotaFirebase {
     }
   }
 
-  // Buscar notas favoritas
-  async buscarFavoritas(userId) {
-    return this.buscarTodasPorUsuario(userId, { favorito: true });
-  }
+  // Buscar notas favoritas (DESABILITADO)
+  // async buscarFavoritas(userId) {
+  //   return this.buscarTodasPorUsuario(userId, { favorito: true });
+  // }
 
   // Buscar notas fixadas
   async buscarFixadas(userId) {
