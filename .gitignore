@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-*/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -12,14 +11,14 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# Build outputs
-build/
-dist/
-*/build/
-*/dist/
+# Firebase
+wrtmind-firebase-adminsdk-fbsvc-f96a42c84b.json
+wrtmin-service-account.json
+*-service-account.json
+firebase-credentials.json
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -27,7 +26,7 @@ yarn-error.log*
 lerna-debug.log*
 
 # Runtime data
-pids
+pids/
 *.pid
 *.seed
 *.pid.lock
@@ -39,8 +38,23 @@ coverage/
 # nyc test coverage
 .nyc_output
 
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
 # Dependency directories
 jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
 
 # Optional npm cache directory
 .npm
@@ -63,7 +77,11 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# parcel-bundler cache (https://parceljs.org/)
+# dotenv environment variables file
+.env
+.env.test
+
+# parcel-bundler cache
 .cache
 .parcel-cache
 
@@ -102,47 +120,14 @@ temp/
 ehthumbs.db
 Thumbs.db
 
-# MongoDB
-*.lock
-
-# Backup files
-*.bak
-*.backup
-
-# Test files
-test-results/
-playwright-report/
-test-results.xml
+# Vercel
+.vercel
 
 # Local development
-.local
+data/
+*.sqlite
+*.db
 
-# Data files
-WRT-Back/data/
-*.json.backup
-
-# Firebase service account keys (sensitive)
-wrtmind-firebase-adminsdk-*.json
-wrtmin-service-account.json
-*-firebase-adminsdk-*.json
-*-service-account*.json
-service-account*.json
-
-# Configuration files with sensitive data
-config.env
-.env
-.env.local
-.env.development
-.env.production
-*.env
-
-# API Keys and Secrets
-api-keys.json
-secrets.json
-credentials.json
-*.key
-*.pem
-*.p12
-
-# Temporary test files
-test-*.js 
+# Backup files
+*.backup
+*.bak 
