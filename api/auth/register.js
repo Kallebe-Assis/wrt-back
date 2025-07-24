@@ -21,10 +21,13 @@ export default function handler(req, res) {
       });
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, nome, senha } = req.body;
 
-    // Validação básica
-    if (!name || !email || !password) {
+    // Validação básica - aceitar tanto 'name' quanto 'nome'
+    const userName = name || nome;
+    const userPassword = password || senha;
+
+    if (!userName || !email || !userPassword) {
       return res.status(400).json({
         success: false,
         error: 'Nome, email e senha são obrigatórios'
@@ -41,7 +44,7 @@ export default function handler(req, res) {
     }
 
     // Validar senha (mínimo 6 caracteres)
-    if (password.length < 6) {
+    if (userPassword.length < 6) {
       return res.status(400).json({
         success: false,
         error: 'Senha deve ter pelo menos 6 caracteres'
@@ -49,7 +52,7 @@ export default function handler(req, res) {
     }
 
     // Simular verificação se o email já existe
-    const existingEmails = ['user1@test.com', 'user2@test.com'];
+    const existingEmails = ['user1@test.com', 'user2@test.com', 'teste@wrtmind.com'];
     if (existingEmails.includes(email)) {
       return res.status(409).json({
         success: false,
@@ -63,9 +66,9 @@ export default function handler(req, res) {
     // Criar novo usuário
     const newUser = {
       id: newUserId,
-      name: name,
+      name: userName,
       email: email,
-      password: password, // Em produção seria hash da senha
+      password: userPassword, // Em produção seria hash da senha
       createdAt: new Date().toISOString()
     };
 
@@ -77,10 +80,8 @@ export default function handler(req, res) {
 
     res.status(201).json({
       success: true,
-      data: {
-        user: userData,
-        token: token
-      },
+      usuario: userData, // Mudança: 'user' -> 'usuario' para compatibilidade com frontend
+      token: token,
       message: 'Usuário registrado com sucesso'
     });
 

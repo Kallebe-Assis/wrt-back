@@ -88,10 +88,8 @@ export default function handler(req, res) {
 
     res.status(200).json({
       success: true,
-      data: {
-        user: userData,
-        token: token
-      },
+      usuario: userData, // Mudança: 'user' -> 'usuario' para compatibilidade com frontend
+      token: token,
       message: 'Login realizado com sucesso'
     });
 
