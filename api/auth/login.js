@@ -2,12 +2,18 @@ const { initializeFirebase, getFirestore } = require('../../config/firebase');
 const bcrypt = require('bcryptjs');
 
 export default function handler(req, res) {
-  // Configurar CORS usando variáveis de ambiente
+  // Configurar CORS de forma mais robusta
   const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
   const origin = req.headers.origin;
   
+  console.log('🌐 CORS - Origin recebido:', origin);
+  console.log('🌐 CORS - Origins permitidos:', allowedOrigins);
+  
   if (allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
+    console.log('✅ CORS - Origin permitido:', origin);
+  } else {
+    console.log('❌ CORS - Origin não permitido:', origin);
   }
   
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -16,6 +22,7 @@ export default function handler(req, res) {
 
   // Responder a requisições OPTIONS (preflight)
   if (req.method === 'OPTIONS') {
+    console.log('🔄 CORS - Respondendo OPTIONS');
     res.status(200).end();
     return;
   }
