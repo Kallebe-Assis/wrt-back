@@ -1,41 +1,36 @@
-const { initializeFirebase } = require('../config/firebase');
+const { db } = require('./firebase-config');
 
 module.exports = async function handler(req, res) {
-  console.log('=== TESTE FIREBASE ===');
+  // Permitir CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  // TRATAR OPTIONS (PREFLIGHT)
   if (req.method === 'OPTIONS') {
-    console.log('OPTIONS request - respondendo 200');
     res.status(200).end();
     return;
   }
   
   try {
-    console.log('1. Inicializando Firebase...');
-    const db = initializeFirebase();
-    console.log('2. Firebase inicializado com sucesso');
+    // Testar conexão com Firebase
+    const testQuery = await db.collection('users').limit(1).get();
     
-    console.log('3. Testando conexão com Firestore...');
-    const testCollection = db.collection('test');
-    console.log('4. Coleção test criada');
-    
-    console.log('5. Testando leitura de dados...');
-    const snapshot = await testCollection.limit(1).get();
-    console.log('6. Leitura realizada com sucesso');
-    
-    res.status(200).json({
+    res.json({
       success: true,
-      message: 'Firebase funcionando corretamente',
-      timestamp: new Date().toISOString()
+      message: 'Firebase conectado com sucesso!',
+      timestamp: new Date().toISOString(),
+      firebaseStatus: 'OK',
+      collections: {
+        users: testQuery.empty ? 'vazia' : 'tem dados'
+      }
     });
     
   } catch (error) {
-    console.error('ERRO NO TESTE FIREBASE:', error.message);
-    console.error('Stack trace:', error.stack);
+    console.error('❌ Erro no teste Firebase:', error);
     res.status(500).json({
       success: false,
-      error: 'Erro no teste Firebase: ' + error.message,
-      timestamp: new Date().toISOString()
+      error: 'Erro ao conectar com Firebase',
+      details: error.message
     });
   }
 }; 

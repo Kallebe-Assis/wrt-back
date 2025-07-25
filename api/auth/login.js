@@ -1,14 +1,4 @@
-const admin = require('firebase-admin');
-
-// Inicializar Firebase se não estiver inicializado
-if (!admin.apps.length) {
-  const serviceAccount = require('../../wrtmin-service-account.json');
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
-}
-
-const db = admin.firestore();
+const { db } = require('../firebase-config');
 
 module.exports = async function handler(req, res) {
   // Permitir CORS
