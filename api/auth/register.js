@@ -3,6 +3,13 @@ const { initializeFirebase } = require('../../config/firebase');
 module.exports = async function handler(req, res) {
   console.log('=== REGISTER SIMPLES ===');
   
+  // TRATAR OPTIONS (PREFLIGHT)
+  if (req.method === 'OPTIONS') {
+    console.log('OPTIONS request - respondendo 200');
+    res.status(200).end();
+    return;
+  }
+  
   try {
     // 1. Pegar dados do body
     const { nome, email, senha } = req.body;
