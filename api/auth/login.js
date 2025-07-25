@@ -25,51 +25,76 @@ module.exports = async function handler(req, res) {
       });
     }
     
-    // 3. Conectar ao Firebase
-    console.log('Conectando ao Firebase...');
-    const db = initializeFirebase();
-    console.log('Firebase conectado');
-    
-    // 4. Buscar usuário
-    console.log('Buscando usuário:', email);
-    const userQuery = await db.collection('users').where('email', '==', email).get();
-    console.log('Usuários encontrados:', userQuery.size);
-    
-    // 5. Verificar se encontrou
-    if (userQuery.empty) {
-      console.log('Usuário não encontrado');
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Usuário não encontrado' 
+    // 3. TESTE SIMPLES SEM FIREBASE
+    console.log('Testando login simples...');
+    if (email === 'kallebe@g2telecom.com.br' && senha === 'Amsterda309061') {
+      console.log('LOGIN SUCESSO (simulado)!');
+      res.status(200).json({
+        success: true,
+        usuario: {
+          id: 'test-id-123',
+          nome: 'Kallebe',
+          email: email
+        },
+        message: 'Login realizado com sucesso (simulado)'
       });
+      return;
     }
     
-    // 6. Pegar dados do usuário
-    const userDoc = userQuery.docs[0];
-    const userData = userDoc.data();
-    console.log('Usuário encontrado:', userData.email);
-    
-    // 7. Verificar senha (comparação direta)
-    console.log('Verificando senha...');
-    if (userData.senha !== senha) {
-      console.log('Senha incorreta');
-      return res.status(401).json({ 
+    // 4. Se não for o usuário de teste, tentar Firebase
+    console.log('Tentando conectar ao Firebase...');
+    try {
+      const db = initializeFirebase();
+      console.log('Firebase conectado');
+      
+      // 5. Buscar usuário
+      console.log('Buscando usuário:', email);
+      const userQuery = await db.collection('users').where('email', '==', email).get();
+      console.log('Usuários encontrados:', userQuery.size);
+      
+      // 6. Verificar se encontrou
+      if (userQuery.empty) {
+        console.log('Usuário não encontrado');
+        return res.status(401).json({ 
+          success: false, 
+          error: 'Usuário não encontrado' 
+        });
+      }
+      
+      // 7. Pegar dados do usuário
+      const userDoc = userQuery.docs[0];
+      const userData = userDoc.data();
+      console.log('Usuário encontrado:', userData.email);
+      
+      // 8. Verificar senha (comparação direta)
+      console.log('Verificando senha...');
+      if (userData.senha !== senha) {
+        console.log('Senha incorreta');
+        return res.status(401).json({ 
+          success: false, 
+          error: 'Senha incorreta' 
+        });
+      }
+      
+      // 9. SUCESSO!
+      console.log('LOGIN SUCESSO!');
+      res.status(200).json({
+        success: true,
+        usuario: {
+          id: userDoc.id,
+          nome: userData.nome,
+          email: userData.email
+        },
+        message: 'Login realizado com sucesso'
+      });
+      
+    } catch (firebaseError) {
+      console.error('ERRO NO FIREBASE:', firebaseError.message);
+      return res.status(500).json({ 
         success: false, 
-        error: 'Senha incorreta' 
+        error: 'Erro ao conectar com o banco de dados' 
       });
     }
-    
-    // 8. SUCESSO!
-    console.log('LOGIN SUCESSO!');
-    res.status(200).json({
-      success: true,
-      usuario: {
-        id: userDoc.id,
-        nome: userData.nome,
-        email: userData.email
-      },
-      message: 'Login realizado com sucesso'
-    });
     
   } catch (error) {
     console.error('ERRO NO LOGIN:', error.message);
