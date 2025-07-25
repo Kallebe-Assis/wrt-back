@@ -1,5 +1,4 @@
 # Arquivos de credenciais
-wrtmin-service-account.json
 config.env
 *.key
 *.pem

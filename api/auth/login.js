@@ -2,6 +2,8 @@ const { initializeFirebase } = require('../../config/firebase');
 
 module.exports = async function handler(req, res) {
   console.log('=== LOGIN SIMPLES ===');
+  console.log('Método da requisição:', req.method);
+  console.log('Headers:', req.headers);
   
   // TRATAR OPTIONS (PREFLIGHT)
   if (req.method === 'OPTIONS') {
@@ -44,8 +46,9 @@ module.exports = async function handler(req, res) {
     // 4. Se não for o usuário de teste, tentar Firebase
     console.log('Tentando conectar ao Firebase...');
     try {
+      console.log('Inicializando Firebase...');
       const db = initializeFirebase();
-      console.log('Firebase conectado');
+      console.log('Firebase conectado com sucesso');
       
       // 5. Buscar usuário
       console.log('Buscando usuário:', email);
@@ -90,17 +93,19 @@ module.exports = async function handler(req, res) {
       
     } catch (firebaseError) {
       console.error('ERRO NO FIREBASE:', firebaseError.message);
+      console.error('Stack trace:', firebaseError.stack);
       return res.status(500).json({ 
         success: false, 
-        error: 'Erro ao conectar com o banco de dados' 
+        error: 'Erro ao conectar com o banco de dados: ' + firebaseError.message 
       });
     }
     
   } catch (error) {
     console.error('ERRO NO LOGIN:', error.message);
+    console.error('Stack trace:', error.stack);
     res.status(500).json({ 
       success: false, 
-      error: 'Erro interno do servidor' 
+      error: 'Erro interno do servidor: ' + error.message 
     });
   }
 }; 
