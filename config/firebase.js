@@ -2,7 +2,7 @@ const admin = require('firebase-admin');
 const path = require('path');
 
 // Caminho do arquivo de credenciais de serviço
-const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || './wrtmin-service-account.json';
+const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || './wrtmind-firebase-adminsdk-fbsvc-f96a42c84b.json';
 
 let initialized = false;
 
