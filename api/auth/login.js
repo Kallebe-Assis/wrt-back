@@ -6,19 +6,6 @@ module.exports = async function handler(req, res) {
   console.log('🌐 Origin:', req.headers.origin);
   console.log('🔗 Method:', req.method);
   console.log('📋 Headers:', JSON.stringify(req.headers, null, 2));
-  
-  // CORS EXPLÍCITO
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-  console.log('✅ CORS Headers configurados');
-  
-  if (req.method === 'OPTIONS') {
-    console.log('🔄 Preflight OPTIONS - Respondendo 200');
-    res.status(200).end();
-    return;
-  }
 
   try {
     console.log('📦 === ANALISANDO BODY ===');
