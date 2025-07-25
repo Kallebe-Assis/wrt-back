@@ -11,7 +11,15 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { email, password } = req.body;
+    // Parse do JSON body para Vercel
+    let body = {};
+    if (req.body) {
+      body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    }
+
+    const { email, password } = body;
+    console.log('Dados recebidos:', { email, password: password ? '***' : 'undefined' });
+    
     if (!email || !password) {
       return res.status(400).json({ success: false, error: 'Email e senha obrigatórios' });
     }
