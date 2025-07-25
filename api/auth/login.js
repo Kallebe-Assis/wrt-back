@@ -2,16 +2,13 @@ const { initializeFirebase, getFirestore } = require('../../config/firebase');
 const bcrypt = require('bcryptjs');
 
 export default function handler(req, res) {
-  // Configurar CORS de forma mais robusta
-  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
+  // Configurar CORS de forma SIMPLES e DIRETA
   const origin = req.headers.origin;
   
   console.log('🌐 CORS - Origin recebido:', origin);
-  console.log('🌐 CORS - Origins permitidos:', allowedOrigins);
-  console.log('🌐 CORS - ALLOWED_ORIGINS env:', process.env.ALLOWED_ORIGINS);
   
-  // Sempre permitir localhost:3000 para desenvolvimento
-  if (origin === 'http://localhost:3000' || allowedOrigins.includes(origin)) {
+  // SEMPRE permitir localhost:3000
+  if (origin === 'http://localhost:3000') {
     res.setHeader('Access-Control-Allow-Origin', origin);
     console.log('✅ CORS - Origin permitido:', origin);
   } else {
@@ -20,7 +17,7 @@ export default function handler(req, res) {
   
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', process.env.CORS_ALLOWED_HEADERS || 'Content-Type,Authorization,user-id,X-Requested-With');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,user-id,X-Requested-With');
 
   // Responder a requisições OPTIONS (preflight)
   if (req.method === 'OPTIONS') {
