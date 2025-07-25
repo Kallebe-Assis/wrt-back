@@ -1,146 +1,260 @@
-require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
-const path = require('path');
-
-// Sistema de tratamento de erros
-const { errorHandler, catchUnhandledErrors } = require('./middleware/errorHandler');
-const { asyncHandler } = require('./middleware/asyncHandler');
-
-// Configuração centralizada
-const { config, validateConfig } = require('./src/config/environment.js');
+const admin = require('firebase-admin');
 
 // Inicializar Firebase
-const { connectToFirebase } = require('./src/config/database.js');
-const firebaseDB = connectToFirebase();
-const firebaseInitialized = !!firebaseDB;
+const serviceAccount = require('./wrtmin-service-account.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
-// Importar rotas apenas se Firebase estiver disponível
-let authRoutes, linksRoutes, syncRoutes, notasRoutes, categoriasRoutes, logsRoutes, adminRoutes, errorRoutes;
-
-if (firebaseInitialized) {
-  try {
-    authRoutes = require('./routes/auth');
-    linksRoutes = require('./routes/links');
-    syncRoutes = require('./routes/sync');
-    notasRoutes = require('./routes/notas');
-    categoriasRoutes = require('./routes/categorias');
-    logsRoutes = require('./routes/logs');
-    adminRoutes = require('./routes/admin');
-    errorRoutes = require('./routes/errorRoutes');
-  } catch (error) {
-    console.log('⚠️ Algumas rotas não puderam ser carregadas:', error.message);
-  }
-}
-
+const db = admin.firestore();
 const app = express();
-const PORT = config.PORT;
+const PORT = 5000;
 
-// Validar configuração
-validateConfig();
-
-// Middleware
-app.use(cors({
-  origin: config.ALLOWED_ORIGINS,
-  credentials: true
-}));
-
-app.use(express.json({ limit: '20mb' }));
-app.use(express.urlencoded({ extended: true, limit: '20mb' }));
-
-// Rotas condicionais
-if (firebaseInitialized && authRoutes) {
-  app.use('/api/auth', authRoutes);
-  app.use('/api/links', linksRoutes);
-  app.use('/api/sync', syncRoutes);
-  app.use('/api/notas', notasRoutes);
-  app.use('/api/categorias', categoriasRoutes);
-  app.use('/api/logs', logsRoutes);
-  app.use('/api/admin', adminRoutes);
-  app.use('/api/errors', errorRoutes);
-  console.log('✅ Rotas da API carregadas');
-} else {
-  console.log('⚠️ Rotas da API não carregadas - Firebase não disponível');
-}
-
-// Rota de debug para verificar variáveis de ambiente
-app.get('/api/debug', (req, res) => {
-  res.json({ 
-    message: 'Debug das variáveis de ambiente',
-    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID ? '✅ Definido' : '❌ Não definido',
-    FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY ? '✅ Definido' : '❌ Não definido',
-    FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL ? '✅ Definido' : '❌ Não definido',
-    JWT_SECRET: process.env.JWT_SECRET ? '✅ Definido' : '❌ Não definido',
-    SESSION_SECRET: process.env.SESSION_SECRET ? '✅ Definido' : '❌ Não definido',
-    ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS ? '✅ Definido' : '❌ Não definido',
-    NODE_ENV: process.env.NODE_ENV || 'development',
-    firebase_initialized: firebaseInitialized
-  });
-});
-
-// Rota de health check
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    message: 'WRTmind Backend API funcionando!',
-    timestamp: new Date().toISOString(),
-    environment: config.NODE_ENV,
-    firebase: firebaseInitialized ? 'connected' : 'not_configured'
-  });
-});
+// Middleware básico
+app.use(express.json());
 
 // Rota de teste
 app.get('/api/test', (req, res) => {
-  res.json({ 
-    message: 'API funcionando!',
-    firebase: firebaseInitialized ? 'connected' : 'not_configured'
-  });
+  res.json({ message: 'API funcionando!' });
 });
 
-// Rota raiz
-app.get('/', (req, res) => {
-  res.json({ 
-    message: 'WRTmind Backend API',
-    version: '1.0.0',
-    firebase: firebaseInitialized ? 'connected' : 'not_configured',
-    endpoints: {
-      health: '/api/health',
-      test: '/api/test',
-      ...(firebaseInitialized && {
-        auth: '/api/auth',
-        notes: '/api/notas',
-        links: '/api/links',
-        categories: '/api/categorias'
-      })
-    },
-    setup: firebaseInitialized ? 'ready' : 'needs_credentials'
-  });
+// Rota de login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, senha } = req.body;
+    
+    // Validar dados
+    if (!email || !senha) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Email e senha obrigatórios' 
+      });
+    }
+    
+    // Buscar usuário no Firebase
+    const userQuery = await db.collection('users').where('email', '==', email).get();
+    
+    if (userQuery.empty) {
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Usuário não encontrado' 
+      });
+    }
+    
+    const userDoc = userQuery.docs[0];
+    const userData = userDoc.data();
+    
+    // Verificar senha
+    if (userData.senha !== senha) {
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Senha incorreta' 
+      });
+    }
+    
+    // Sucesso
+    res.json({
+      success: true,
+      usuario: {
+        id: userDoc.id,
+        nome: userData.nome,
+        email: userData.email
+      },
+      message: 'Login realizado com sucesso'
+    });
+    
+  } catch (error) {
+    console.error('Erro no login:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Erro interno do servidor' 
+    });
+  }
 });
 
-// Rota 404 - Página não encontrada
-app.use('*', (req, res) => {
-  const error = new Error(`Rota não encontrada: ${req.originalUrl}`);
-  error.status = 404;
-  error.code = 'NOT_FOUND';
-  res.status(404).json({
-    error: 'Rota não encontrada',
-    message: `A rota ${req.originalUrl} não existe`,
-    code: 'NOT_FOUND',
-    timestamp: new Date().toISOString()
-  });
+// Rota de cadastro
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { nome, email, senha } = req.body;
+    
+    // Validar dados
+    if (!nome || !email || !senha) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Nome, email e senha obrigatórios' 
+      });
+    }
+    
+    // Verificar se email já existe
+    const userQuery = await db.collection('users').where('email', '==', email).get();
+    
+    if (!userQuery.empty) {
+      return res.status(409).json({ 
+        success: false, 
+        error: 'Email já cadastrado' 
+      });
+    }
+    
+    // Criar usuário
+    const docRef = await db.collection('users').add({
+      nome,
+      email,
+      senha,
+      dataCriacao: new Date().toISOString()
+    });
+    
+    res.status(201).json({
+      success: true,
+      usuario: {
+        id: docRef.id,
+        nome,
+        email
+      },
+      message: 'Usuário cadastrado com sucesso'
+    });
+    
+  } catch (error) {
+    console.error('Erro no cadastro:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Erro interno do servidor' 
+    });
+  }
 });
 
-// Middleware de tratamento de erros (DEVE ser o último middleware)
-app.use(errorHandler);
+// Rota para buscar notas
+app.get('/api/notas', async (req, res) => {
+  try {
+    const { userId } = req.query;
+    
+    if (!userId) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'userId obrigatório' 
+      });
+    }
+    
+    const notasQuery = await db.collection('notas').where('userId', '==', userId).get();
+    const notas = [];
+    
+    notasQuery.forEach(doc => {
+      notas.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    res.json({
+      success: true,
+      notas
+    });
+    
+  } catch (error) {
+    console.error('Erro ao buscar notas:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Erro interno do servidor' 
+    });
+  }
+});
 
-// Capturar erros não tratados do processo
-catchUnhandledErrors();
+// Rota para criar nota
+app.post('/api/notas', async (req, res) => {
+  try {
+    const { titulo, conteudo, userId } = req.body;
+    
+    if (!titulo || !conteudo || !userId) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Título, conteúdo e userId obrigatórios' 
+      });
+    }
+    
+    const docRef = await db.collection('notas').add({
+      titulo,
+      conteudo,
+      userId,
+      dataCriacao: new Date().toISOString(),
+      dataModificacao: new Date().toISOString()
+    });
+    
+    res.status(201).json({
+      success: true,
+      nota: {
+        id: docRef.id,
+        titulo,
+        conteudo,
+        userId
+      },
+      message: 'Nota criada com sucesso'
+    });
+    
+  } catch (error) {
+    console.error('Erro ao criar nota:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Erro interno do servidor' 
+    });
+  }
+});
+
+// Rota para atualizar nota
+app.put('/api/notas/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { titulo, conteudo } = req.body;
+    
+    if (!titulo || !conteudo) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Título e conteúdo obrigatórios' 
+      });
+    }
+    
+    await db.collection('notas').doc(id).update({
+      titulo,
+      conteudo,
+      dataModificacao: new Date().toISOString()
+    });
+    
+    res.json({
+      success: true,
+      message: 'Nota atualizada com sucesso'
+    });
+    
+  } catch (error) {
+    console.error('Erro ao atualizar nota:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Erro interno do servidor' 
+    });
+  }
+});
+
+// Rota para deletar nota
+app.delete('/api/notas/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    await db.collection('notas').doc(id).delete();
+    
+    res.json({
+      success: true,
+      message: 'Nota deletada com sucesso'
+    });
+    
+  } catch (error) {
+    console.error('Erro ao deletar nota:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Erro interno do servidor' 
+    });
+  }
+});
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📡 API disponível em: http://localhost:${PORT}/api`);
-  console.log(`🔧 Firebase: ${firebaseInitialized ? 'Conectado' : 'Não configurado'}`);
-  console.log(`🚨 Sistema de tratamento de erros ativo`);
-  console.log(`📊 Dashboard de erros: http://localhost:${PORT}/api/errors/dashboard`);
+  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Teste: http://localhost:${PORT}/api/test`);
 }); 
