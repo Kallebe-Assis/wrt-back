@@ -86,12 +86,20 @@ export default function handler(req, res) {
     // Primeiro tentar com o email exato
     if (mockUsers[email]) {
       user = mockUsers[email];
+      console.log('🔍 Usuário encontrado por email exato:', user.id);
     } else {
       // Se não encontrar, verificar se é o email real do Kallebe
       if (email === 'kallebe@g2telecom.com.br') {
         user = mockUsers['kallebe-real@g2telecom.com.br'];
+        console.log('🔍 Usuário encontrado por email real do Kallebe:', user.id);
       }
     }
+
+    console.log('🔍 Debug - Email recebido:', email);
+    console.log('🔍 Debug - Senha recebida:', userPassword);
+    console.log('🔍 Debug - Usuário encontrado:', user ? user.id : 'null');
+    console.log('🔍 Debug - Senha do usuário:', user ? user.password : 'null');
+    console.log('🔍 Debug - Senhas iguais?', user ? (user.password === userPassword) : 'N/A');
 
     if (!user || user.password !== userPassword) {
       console.log('❌ Login - Credenciais inválidas:', { email, userPassword, userExists: !!user });
