@@ -1,3 +1,6 @@
+const { initializeFirebase, getFirestore } = require('../../config/firebase');
+const bcrypt = require('bcryptjs');
+
 export default function handler(req, res) {
   // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -45,7 +48,76 @@ export default function handler(req, res) {
       });
     }
 
-    // Dados mock de usuários para teste (incluindo credenciais reais)
+    // Tentar usar Firebase real primeiro
+    try {
+      console.log('🔍 Tentando autenticar com Firebase real...');
+      const db = initializeFirebase();
+      
+      // Buscar usuário no banco real
+      const userQuery = await db.collection('users')
+        .where('email', '==', email)
+        .limit(1)
+        .get();
+
+      if (!userQuery.empty) {
+        const userDoc = userQuery.docs[0];
+        const userData = userDoc.data();
+        
+        console.log('✅ Usuário encontrado no banco real:', userData.email);
+        console.log('🔍 Debug - ID do usuário:', userDoc.id);
+        console.log('🔍 Debug - Nome:', userData.nome);
+        console.log('🔍 Debug - Email:', userData.email);
+        console.log('🔍 Debug - Senha hasheada:', userData.senha ? 'Sim' : 'Não');
+        
+        // Verificar senha hasheada
+        let passwordValid = false;
+        
+        if (userData.senha) {
+          try {
+            console.log('🔍 Verificando senha hasheada...');
+            passwordValid = await bcrypt.compare(userPassword, userData.senha);
+            console.log('🔍 Resultado da verificação:', passwordValid);
+          } catch (bcryptError) {
+            console.log('⚠️ Erro ao verificar hash:', bcryptError.message);
+            passwordValid = false;
+          }
+        } else {
+          console.log('❌ Senha não encontrada no banco');
+        }
+        
+        if (passwordValid) {
+          console.log('✅ Senha válida para usuário real');
+          
+          // Gerar token JWT mock (em produção seria um token real)
+          const token = `mock-jwt-token-${userDoc.id}-${Date.now()}`;
+
+          // Retornar dados do usuário (sem a senha)
+          const { senha: _, ...userDataClean } = userData;
+          
+          res.status(200).json({
+            success: true,
+            usuario: {
+              id: userDoc.id,
+              ...userDataClean
+            },
+            token: token,
+            message: 'Login realizado com sucesso (banco real)'
+          });
+          return;
+        } else {
+          console.log('❌ Senha inválida para usuário real');
+        }
+      } else {
+        console.log('❌ Usuário não encontrado no banco real');
+      }
+    } catch (firebaseError) {
+      console.log('⚠️ Erro ao conectar com Firebase, usando dados mock:', firebaseError.message);
+    }
+
+    // Fallback para dados mock se Firebase falhar
+    console.log('🔄 Usando dados mock como fallback...');
+    
+    // Dados mock de usuários para teste
     const mockUsers = {
       'user1@test.com': {
         id: 'user1',
@@ -73,32 +145,9 @@ export default function handler(req, res) {
       }
     };
 
+    const user = mockUsers[email];
+
     // Verificar se o usuário existe e a senha está correta
-    let user = null;
-    
-    // Primeiro tentar com o email exato
-    if (mockUsers[email]) {
-      user = mockUsers[email];
-      console.log('🔍 Usuário encontrado por email exato:', user.id);
-    }
-
-    // Se não encontrou e é o email do Kallebe, verificar com senha real
-    if (!user && email === 'kallebe@g2telecom.com.br' && userPassword === 'Amsterda309061') {
-      user = {
-        id: 'kallebe-real',
-        name: 'Kallebe (Real)',
-        email: 'kallebe@g2telecom.com.br',
-        password: 'Amsterda309061'
-      };
-      console.log('🔍 Usuário encontrado com credenciais reais do Kallebe');
-    }
-
-    console.log('🔍 Debug - Email recebido:', email);
-    console.log('🔍 Debug - Senha recebida:', userPassword);
-    console.log('🔍 Debug - Usuário encontrado:', user ? user.id : 'null');
-    console.log('🔍 Debug - Senha do usuário:', user ? user.password : 'null');
-    console.log('🔍 Debug - Senhas iguais?', user ? (user.password === userPassword) : 'N/A');
-
     if (!user || user.password !== userPassword) {
       console.log('❌ Login - Credenciais inválidas:', { email, userPassword, userExists: !!user });
       return res.status(401).json({
@@ -113,13 +162,13 @@ export default function handler(req, res) {
     // Retornar dados do usuário (sem a senha) e token
     const { password: _, ...userData } = user;
 
-    console.log('✅ Login - Sucesso:', { email, userId: user.id });
+    console.log('✅ Login - Sucesso (mock):', { email, userId: user.id });
 
     res.status(200).json({
       success: true,
       usuario: userData, // Mudança: 'user' -> 'usuario' para compatibilidade com frontend
       token: token,
-      message: 'Login realizado com sucesso'
+      message: 'Login realizado com sucesso (mock)'
     });
 
   } catch (error) {
