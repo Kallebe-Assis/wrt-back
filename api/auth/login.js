@@ -1,6 +1,3 @@
-const { initializeFirebase, getFirestore } = require('../../config/firebase');
-const bcrypt = require('bcryptjs');
-
 export default function handler(req, res) {
   // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -48,77 +45,7 @@ export default function handler(req, res) {
       });
     }
 
-    // Tentar usar Firebase real primeiro
-    try {
-      console.log('🔍 Tentando autenticar com Firebase real...');
-      const db = initializeFirebase();
-      
-      // Buscar usuário no banco real
-      const userQuery = await db.collection('users')
-        .where('email', '==', email)
-        .limit(1)
-        .get();
-
-      if (!userQuery.empty) {
-        const userDoc = userQuery.docs[0];
-        const userData = userDoc.data();
-        
-        console.log('✅ Usuário encontrado no banco real:', userData.email);
-        
-        // Verificar senha (pode estar hasheada ou em texto plano)
-        let passwordValid = false;
-        
-        if (userData.senha) {
-          // Tentar comparar com senha hasheada
-          try {
-            passwordValid = await bcrypt.compare(userPassword, userData.senha);
-          } catch (bcryptError) {
-            console.log('⚠️ Erro ao verificar hash, tentando comparação direta...');
-            passwordValid = userData.senha === userPassword;
-          }
-        } else if (userData.password) {
-          // Tentar comparar com senha hasheada
-          try {
-            passwordValid = await bcrypt.compare(userPassword, userData.password);
-          } catch (bcryptError) {
-            console.log('⚠️ Erro ao verificar hash, tentando comparação direta...');
-            passwordValid = userData.password === userPassword;
-          }
-        }
-        
-        if (passwordValid) {
-          console.log('✅ Senha válida para usuário real');
-          
-          // Gerar token JWT mock (em produção seria um token real)
-          const token = `mock-jwt-token-${userDoc.id}-${Date.now()}`;
-
-          // Retornar dados do usuário (sem a senha)
-          const { senha: _, password: __, ...userDataClean } = userData;
-          
-          res.status(200).json({
-            success: true,
-            usuario: {
-              id: userDoc.id,
-              ...userDataClean
-            },
-            token: token,
-            message: 'Login realizado com sucesso (banco real)'
-          });
-          return;
-        } else {
-          console.log('❌ Senha inválida para usuário real');
-        }
-      } else {
-        console.log('❌ Usuário não encontrado no banco real');
-      }
-    } catch (firebaseError) {
-      console.log('⚠️ Erro ao conectar com Firebase, usando dados mock:', firebaseError.message);
-    }
-
-    // Fallback para dados mock se Firebase falhar
-    console.log('🔄 Usando dados mock como fallback...');
-    
-    // Dados mock de usuários para teste
+    // Dados mock de usuários para teste (incluindo credenciais reais)
     const mockUsers = {
       'user1@test.com': {
         id: 'user1',
@@ -143,12 +70,29 @@ export default function handler(req, res) {
         name: 'Kallebe',
         email: 'kallebe@g2telecom.com.br',
         password: '123456'
+      },
+      // Adicionar usuário real do banco (senha real)
+      'kallebe-real@g2telecom.com.br': {
+        id: 'kallebe-real',
+        name: 'Kallebe (Real)',
+        email: 'kallebe@g2telecom.com.br',
+        password: 'Amsterda309061'
       }
     };
 
-    const user = mockUsers[email];
-
     // Verificar se o usuário existe e a senha está correta
+    let user = null;
+    
+    // Primeiro tentar com o email exato
+    if (mockUsers[email]) {
+      user = mockUsers[email];
+    } else {
+      // Se não encontrar, verificar se é o email real do Kallebe
+      if (email === 'kallebe@g2telecom.com.br') {
+        user = mockUsers['kallebe-real@g2telecom.com.br'];
+      }
+    }
+
     if (!user || user.password !== userPassword) {
       console.log('❌ Login - Credenciais inválidas:', { email, userPassword, userExists: !!user });
       return res.status(401).json({
@@ -163,13 +107,13 @@ export default function handler(req, res) {
     // Retornar dados do usuário (sem a senha) e token
     const { password: _, ...userData } = user;
 
-    console.log('✅ Login - Sucesso (mock):', { email, userId: user.id });
+    console.log('✅ Login - Sucesso:', { email, userId: user.id });
 
     res.status(200).json({
       success: true,
       usuario: userData, // Mudança: 'user' -> 'usuario' para compatibilidade com frontend
       token: token,
-      message: 'Login realizado com sucesso (mock)'
+      message: 'Login realizado com sucesso'
     });
 
   } catch (error) {

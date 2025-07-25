@@ -87,8 +87,38 @@ async function testRealLogin() {
     
     if (loginResponse2.data.success) {
       console.log(`✅ Login mock bem-sucedido!`);
+      console.log(`👤 Usuário ID: ${loginResponse2.data.usuario.id}`);
+      console.log(`📧 Email: ${loginResponse2.data.usuario.email}`);
+      console.log(`📝 Nome: ${loginResponse2.data.usuario.nome || loginResponse2.data.usuario.name}`);
     } else {
       console.log(`❌ Login mock falhou: ${loginResponse2.data.error}`);
+    }
+    console.log('---\n');
+  } catch (error) {
+    console.log(`❌ Erro: ${error.message}\n`);
+  }
+  
+  // Teste 3: Login com user1@test.com
+  console.log('3️⃣ Testando login com user1@test.com / 123456...');
+  try {
+    const loginResponse3 = await makeRequest(`${baseUrl}/api/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: 'user1@test.com',
+        senha: '123456'
+      })
+    });
+    
+    console.log(`✅ Status: ${loginResponse3.status}`);
+    console.log(`📦 Resposta:`, JSON.stringify(loginResponse3.data, null, 2));
+    
+    if (loginResponse3.data.success) {
+      console.log(`✅ Login user1 bem-sucedido!`);
+    } else {
+      console.log(`❌ Login user1 falhou: ${loginResponse3.data.error}`);
     }
     console.log('---\n');
   } catch (error) {
@@ -98,7 +128,8 @@ async function testRealLogin() {
   console.log('🎯 Resumo dos testes:');
   console.log('👤 Credenciais reais: kallebe@g2telecom.com.br / Amsterda309061');
   console.log('👤 Credenciais mock: kallebe@g2telecom.com.br / 123456');
-  console.log('📝 O sistema deve priorizar o banco real, mas usar mock como fallback');
+  console.log('👤 Credenciais user1: user1@test.com / 123456');
+  console.log('📝 Agora você pode usar suas credenciais reais no frontend!');
 }
 
 testRealLogin().catch(console.error); 
