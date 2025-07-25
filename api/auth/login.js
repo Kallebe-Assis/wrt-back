@@ -17,18 +17,21 @@ module.exports = async function handler(req, res) {
     console.log('Body raw:', req.body);
     console.log('Body type:', typeof req.body);
     
-    // Parse do JSON body para Vercel
+    // Parse do JSON body para Vercel - CORREÇÃO
     let body = {};
     if (req.body) {
+      // Vercel Serverless Functions - body pode vir como string ou objeto
       if (typeof req.body === 'string') {
         try {
           body = JSON.parse(req.body);
+          console.log('Parse JSON string OK');
         } catch (e) {
           console.log('Erro ao fazer parse do JSON:', e);
-          body = {};
+          return res.status(400).json({ success: false, error: 'JSON inválido' });
         }
-      } else {
+      } else if (typeof req.body === 'object') {
         body = req.body;
+        console.log('Body já é objeto');
       }
     }
 
