@@ -36,11 +36,11 @@ module.exports = async function handler(req, res) {
     }
 
     console.log('Body parsed:', body);
-    const { email, password } = body;
+    const { email, senha } = body;
     console.log('Email:', email);
-    console.log('Password:', password ? '***' : 'undefined');
+    console.log('Senha:', senha ? '***' : 'undefined');
     
-    if (!email || !password) {
+    if (!email || !senha) {
       console.log('ERRO: Email ou senha faltando');
       return res.status(400).json({ success: false, error: 'Email e senha obrigatórios' });
     }
@@ -58,7 +58,7 @@ module.exports = async function handler(req, res) {
     const userData = userDoc.data();
     console.log('Usuário encontrado:', userData.email);
     
-    if (userData.senha !== password) {
+    if (userData.senha !== senha) {
       console.log('Senha incorreta');
       return res.status(401).json({ success: false, error: 'Senha incorreta' });
     }
