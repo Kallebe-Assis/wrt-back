@@ -8,8 +8,10 @@ export default function handler(req, res) {
   
   console.log('🌐 CORS - Origin recebido:', origin);
   console.log('🌐 CORS - Origins permitidos:', allowedOrigins);
+  console.log('🌐 CORS - ALLOWED_ORIGINS env:', process.env.ALLOWED_ORIGINS);
   
-  if (allowedOrigins.includes(origin)) {
+  // Sempre permitir localhost:3000 para desenvolvimento
+  if (origin === 'http://localhost:3000' || allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     console.log('✅ CORS - Origin permitido:', origin);
   } else {
