@@ -98,6 +98,9 @@ export default function handler(req, res) {
     console.log('🔍 Debug - Usuário encontrado:', user ? user.id : 'null');
     console.log('🔍 Debug - Senha do usuário:', user ? user.password : 'null');
     console.log('🔍 Debug - Senhas iguais?', user ? (user.password === userPassword) : 'N/A');
+    console.log('🔍 Debug - Email é kallebe?', email === 'kallebe@g2telecom.com.br');
+    console.log('🔍 Debug - Senha é Amsterda309061?', userPassword === 'Amsterda309061');
+    console.log('🔍 Debug - Condição para credenciais reais:', !user && email === 'kallebe@g2telecom.com.br' && userPassword === 'Amsterda309061');
 
     if (!user || user.password !== userPassword) {
       console.log('❌ Login - Credenciais inválidas:', { email, userPassword, userExists: !!user });
