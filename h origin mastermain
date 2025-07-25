@@ -1,0 +1,3 @@
+[33m7e7f885[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m CORREÇÃO FINAL: Alinhar campos email/senha entre frontend e backend
+[33mdc4728e[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Corrigir parse do body para Vercel Serverless Functions
+[33m9120318[m Adicionar logs detalhados para debugar o body da requisição
