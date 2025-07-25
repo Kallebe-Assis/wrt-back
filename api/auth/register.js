@@ -1,3 +1,6 @@
+const { initializeFirebase, getFirestore } = require('../../config/firebase');
+const bcrypt = require('bcryptjs');
+
 export default function handler(req, res) {
   // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,8 +25,6 @@ export default function handler(req, res) {
     }
 
     const { name, email, password, nome, senha } = req.body;
-
-    // Validação básica - aceitar tanto 'name' quanto 'nome'
     const userName = name || nome;
     const userPassword = password || senha;
 
@@ -51,46 +52,59 @@ export default function handler(req, res) {
       });
     }
 
-    // Simular verificação se o email já existe
-    const existingEmails = ['user1@test.com', 'user2@test.com', 'teste@wrtmind.com', 'kallebe@g2telecom.com.br'];
-    if (existingEmails.includes(email)) {
+    // Conectar ao Firebase
+    const db = initializeFirebase();
+    
+    // Verificar se o email já existe
+    const existingUserQuery = await db.collection('users')
+      .where('email', '==', email)
+      .limit(1)
+      .get();
+
+    if (!existingUserQuery.empty) {
       return res.status(409).json({
         success: false,
         error: 'Email já cadastrado'
       });
     }
 
-    // Gerar ID único para o novo usuário
-    const newUserId = `user${Date.now()}`;
+    // Hash da senha
+    const hashedPassword = await bcrypt.hash(userPassword, 12);
 
     // Criar novo usuário
     const newUser = {
-      id: newUserId,
-      name: userName,
+      nome: userName,
       email: email,
-      password: userPassword, // Em produção seria hash da senha
-      createdAt: new Date().toISOString()
+      senha: hashedPassword,
+      ativo: true,
+      dataCriacao: new Date().toISOString(),
+      dataModificacao: new Date().toISOString()
     };
 
-    // Gerar token JWT mock
-    const token = `mock-jwt-token-${newUser.id}-${Date.now()}`;
+    // Salvar no banco
+    const userRef = await db.collection('users').add(newUser);
 
-    // Retornar dados do usuário (sem a senha) e token
-    const { password: _, ...userData } = newUser;
+    // Gerar token
+    const token = `jwt-token-${userRef.id}-${Date.now()}`;
+
+    // Retornar dados do usuário (sem a senha)
+    const { senha: _, ...userDataClean } = newUser;
 
     res.status(201).json({
       success: true,
-      usuario: userData, // Mudança: 'user' -> 'usuario' para compatibilidade com frontend
+      usuario: {
+        id: userRef.id,
+        ...userDataClean
+      },
       token: token,
       message: 'Usuário registrado com sucesso'
     });
 
   } catch (error) {
-    console.error('Erro no endpoint /auth/register:', error);
+    console.error('Erro no registro:', error);
     res.status(500).json({
       success: false,
-      error: 'Erro interno do servidor',
-      message: error.message
+      error: 'Erro interno do servidor'
     });
   }
 } 
