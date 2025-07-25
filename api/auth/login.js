@@ -70,13 +70,6 @@ export default function handler(req, res) {
         name: 'Kallebe',
         email: 'kallebe@g2telecom.com.br',
         password: '123456'
-      },
-      // Adicionar usuário real do banco (senha real)
-      'kallebe-real@g2telecom.com.br': {
-        id: 'kallebe-real',
-        name: 'Kallebe (Real)',
-        email: 'kallebe@g2telecom.com.br',
-        password: 'Amsterda309061'
       }
     };
 
@@ -87,12 +80,17 @@ export default function handler(req, res) {
     if (mockUsers[email]) {
       user = mockUsers[email];
       console.log('🔍 Usuário encontrado por email exato:', user.id);
-    } else {
-      // Se não encontrar, verificar se é o email real do Kallebe
-      if (email === 'kallebe@g2telecom.com.br') {
-        user = mockUsers['kallebe-real@g2telecom.com.br'];
-        console.log('🔍 Usuário encontrado por email real do Kallebe:', user.id);
-      }
+    }
+
+    // Se não encontrou e é o email do Kallebe, verificar com senha real
+    if (!user && email === 'kallebe@g2telecom.com.br' && userPassword === 'Amsterda309061') {
+      user = {
+        id: 'kallebe-real',
+        name: 'Kallebe (Real)',
+        email: 'kallebe@g2telecom.com.br',
+        password: 'Amsterda309061'
+      };
+      console.log('🔍 Usuário encontrado com credenciais reais do Kallebe');
     }
 
     console.log('🔍 Debug - Email recebido:', email);
