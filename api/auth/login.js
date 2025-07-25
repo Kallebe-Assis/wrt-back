@@ -1,7 +1,7 @@
 const { initializeFirebase, getFirestore } = require('../../config/firebase');
 const bcrypt = require('bcryptjs');
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   // CORS FIXO E DIRETO - SEM CONDIÇÕES
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
