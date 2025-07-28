@@ -22,6 +22,9 @@
     },
     "api/test-firebase.js": {
       "maxDuration": 30
+    },
+    "api/test-simple.js": {
+      "maxDuration": 30
     }
   }
 } 
