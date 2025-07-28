@@ -15,16 +15,51 @@ const PORT = process.env.PORT || 5000;
 // Middleware básico
 app.use(express.json());
 
-// Permitir todas as origens (sem CORS)
+// Middleware adicional para garantir CORS
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, user-id');
+  // Garantir que CORS seja aplicado em todas as respostas
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', '*');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Expose-Headers', '*');
+  res.setHeader('Access-Control-Max-Age', '86400');
   
+  // Para requisições OPTIONS, responder imediatamente
   if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
+    res.status(200).end();
     return;
   }
+  
+  next();
+});
+
+// Configuração CORS completamente permissiva - SEM RESTRIÇÕES
+app.use((req, res, next) => {
+  // Permitir TODAS as origens sem exceção
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  
+  // Permitir TODOS os métodos HTTP
+  res.setHeader('Access-Control-Allow-Methods', '*');
+  
+  // Permitir TODOS os headers
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  
+  // Permitir credenciais
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  // Expor TODOS os headers
+  res.setHeader('Access-Control-Expose-Headers', '*');
+  
+  // Configurações adicionais para evitar problemas
+  res.setHeader('Access-Control-Max-Age', '86400');
+  
+  // Responder imediatamente para requisições OPTIONS
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
   next();
 });
 
