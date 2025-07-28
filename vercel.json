@@ -23,6 +23,6 @@
     "api/test-firebase.js": {
       "maxDuration": 30
     }
-  },
+  }
 
 } 
