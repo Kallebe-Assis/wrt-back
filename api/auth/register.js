@@ -1,11 +1,7 @@
-const { setupCORS } = require('../cors');
 const { db } = require('../firebase-config');
 const bcrypt = require('bcryptjs');
 
 module.exports = async function handler(req, res) {
-  // Configurar CORS
-  const corsHandled = setupCORS(req, res);
-  if (corsHandled) return;
 
   // Apenas POST permitido
   if (req.method !== 'POST') {

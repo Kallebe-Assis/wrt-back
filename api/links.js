@@ -1,9 +1,4 @@
-const { setupCORS } = require('./cors');
-
 module.exports = async function handler(req, res) {
-  // Configurar CORS
-  const corsHandled = setupCORS(req, res);
-  if (corsHandled) return;
 
   const { method } = req;
   const userId = req.headers['user-id'];

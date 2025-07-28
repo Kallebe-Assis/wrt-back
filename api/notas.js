@@ -1,10 +1,6 @@
-const { setupCORS } = require('./cors');
 const { db } = require('./firebase-config');
 
 module.exports = async function handler(req, res) {
-  // Configurar CORS
-  const corsHandled = setupCORS(req, res);
-  if (corsHandled) return;
 
   const { method } = req;
 

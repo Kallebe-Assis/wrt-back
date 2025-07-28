@@ -15,18 +15,6 @@ const PORT = process.env.PORT || 5000;
 // Middleware básico
 app.use(express.json());
 
-// CORS configurado
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
-
 // Rota de teste
 app.get('/api/test', (req, res) => {
   res.json({ 
