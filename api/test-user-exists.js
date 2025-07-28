@@ -29,7 +29,7 @@ module.exports = async function handler(req, res) {
     console.log('🔍 Verificando se usuário existe:', email);
 
     // Buscar usuário no Firebase
-    const usuariosRef = db.collection('usuarios');
+    const usuariosRef = db.collection('users');
     const query = await usuariosRef.where('email', '==', email).limit(1).get();
 
     if (query.empty) {

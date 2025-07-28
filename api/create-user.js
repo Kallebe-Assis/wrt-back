@@ -1,8 +1,7 @@
-const { db } = require('../firebase-config-vercel');
+const { db } = require('./firebase-config-vercel');
 const bcrypt = require('bcryptjs');
 
 module.exports = async function handler(req, res) {
-
   // Tratar preflight OPTIONS
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -18,28 +17,28 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  const { email, senha, nome } = req.body;
+  const { nome, email, senha } = req.body;
 
-  if (!email || !senha || !nome) {
+  if (!nome || !email || !senha) {
     return res.status(400).json({
       success: false,
-      error: 'Email, senha e nome são obrigatórios'
+      error: 'Nome, email e senha são obrigatórios'
     });
   }
 
   try {
-    console.log('📝 Tentativa de registro:', { email, nome, senha: senha ? '***' : 'não fornecida' });
+    console.log('👤 Criando usuário:', { nome, email, senha: senha ? '***' : 'não fornecida' });
 
     // Verificar se usuário já existe
     const usuariosRef = db.collection('users');
     const query = await usuariosRef.where('email', '==', email).limit(1).get();
 
     if (!query.empty) {
-      console.log('❌ Email já cadastrado:', email);
+      console.log('❌ Usuário já existe:', email);
       return res.status(409).json({
         success: false,
-        error: 'Email já cadastrado',
-        message: 'Este email já está sendo usado'
+        error: 'Usuário já existe',
+        message: `Usuário com email ${email} já está cadastrado`
       });
     }
 
@@ -49,31 +48,35 @@ module.exports = async function handler(req, res) {
 
     // Criar usuário
     const novoUsuario = {
-      email,
-      nome,
+      nome: nome.trim(),
+      email: email.trim().toLowerCase(),
       senha: senhaHash,
-      dataCriacao: new Date().toISOString(),
-      dataModificacao: new Date().toISOString()
+      dataCriacao: new Date(),
+      ativo: true
     };
 
     const docRef = await usuariosRef.add(novoUsuario);
 
-    console.log('✅ Usuário registrado com sucesso:', { email, id: docRef.id });
+    console.log('✅ Usuário criado com sucesso:', { 
+      id: docRef.id,
+      nome: novoUsuario.nome,
+      email: novoUsuario.email
+    });
 
     // Retornar dados do usuário (sem senha)
     const { senha: _, ...userInfo } = novoUsuario;
-
+    
     res.status(201).json({
       success: true,
       user: {
         id: docRef.id,
         ...userInfo
       },
-      message: 'Usuário registrado com sucesso'
+      message: 'Usuário criado com sucesso'
     });
 
   } catch (error) {
-    console.error('Erro no registro:', error);
+    console.error('❌ Erro ao criar usuário:', error);
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor',
