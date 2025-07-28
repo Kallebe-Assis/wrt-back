@@ -1,10 +1,6 @@
 module.exports = async function handler(req, res) {
 
-  // Permitir requisições OPTIONS (preflight CORS)
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+
 
   const { method } = req;
   const userId = req.headers['user-id'];

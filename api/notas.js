@@ -2,11 +2,7 @@ const { db } = require('./firebase-config-vercel');
 
 module.exports = async function handler(req, res) {
 
-  // Permitir requisições OPTIONS (preflight CORS)
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+
 
   const { method } = req;
 
