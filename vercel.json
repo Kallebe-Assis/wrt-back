@@ -5,7 +5,16 @@
   "installCommand": "npm install",
   "framework": null,
   "functions": {
-    "api/index.js": {
+    "api/auth/login.js": {
+      "maxDuration": 30
+    },
+    "api/notas.js": {
+      "maxDuration": 30
+    },
+    "api/links.js": {
+      "maxDuration": 30
+    },
+    "api/categorias.js": {
       "maxDuration": 30
     }
   },
