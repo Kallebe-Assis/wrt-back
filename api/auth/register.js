@@ -1,4 +1,4 @@
-const { db } = require('../firebase-config');
+const { db } = require('../firebase-config-vercel');
 const bcrypt = require('bcryptjs');
 
 module.exports = async function handler(req, res) {
