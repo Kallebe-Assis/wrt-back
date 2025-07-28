@@ -3,7 +3,11 @@ const bcrypt = require('bcryptjs');
 
 module.exports = async function handler(req, res) {
 
-
+  // Tratar preflight OPTIONS
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
   // Apenas POST permitido
   if (req.method !== 'POST') {

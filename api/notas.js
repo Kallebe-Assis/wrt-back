@@ -2,7 +2,11 @@ const { db } = require('./firebase-config-vercel');
 
 module.exports = async function handler(req, res) {
 
-
+  // Tratar preflight OPTIONS
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
   const { method } = req;
 
