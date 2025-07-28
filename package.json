@@ -8,8 +8,7 @@
     "dev": "nodemon backend-zero.js",
     "quick": "node start-quick.js",
     "setup": "node setup.js",
-    "test": "echo \"No tests specified\" && exit 0",
-    "build": "echo \"No build required\" && exit 0"
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "keywords": [
     "wrtmind",
