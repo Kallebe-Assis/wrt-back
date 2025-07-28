@@ -19,18 +19,6 @@
     },
     "api/categorias.js": {
       "maxDuration": 30
-    },
-    "api/test-firebase.js": {
-      "maxDuration": 30
-    },
-    "api/test-simple.js": {
-      "maxDuration": 30
-    },
-    "api/test-login.js": {
-      "maxDuration": 30
-    },
-    "api/test-firebase-config.js": {
-      "maxDuration": 30
     }
   },
   "headers": [
