@@ -2,6 +2,8 @@
 config.env
 *.key
 *.pem
+# Manter arquivo de credenciais do Firebase
+!wrtmin-service-account.json
 
 # Logs
 *.log
