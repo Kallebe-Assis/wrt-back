@@ -1,4 +1,6 @@
 const { setupCORS } = require('../cors');
+const { db } = require('../firebase-config');
+const bcrypt = require('bcryptjs');
 
 module.exports = async function handler(req, res) {
   // Configurar CORS
@@ -24,30 +26,58 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Mock de autenticação - em produção seria com Firebase Auth
-    if (email === 'teste@teste.com' && senha === '123456') {
-      const user = {
-        id: 'user1',
-        email: email,
-        nome: 'Usuário Teste'
-      };
+    console.log('🔐 Tentativa de login:', { email, senha: senha ? '***' : 'não fornecida' });
 
-      res.json({
-        success: true,
-        user: user,
-        message: 'Login realizado com sucesso'
-      });
-    } else {
-      res.status(401).json({
+    // Buscar usuário no Firebase
+    const usuariosRef = db.collection('usuarios');
+    const query = await usuariosRef.where('email', '==', email).limit(1).get();
+
+    if (query.empty) {
+      console.log('❌ Usuário não encontrado:', email);
+      return res.status(401).json({
         success: false,
-        error: 'Credenciais inválidas'
+        error: 'Credenciais inválidas',
+        message: 'Email ou senha incorretos'
       });
     }
+
+    const userDoc = query.docs[0];
+    const userData = userDoc.data();
+
+    console.log('🔍 Usuário encontrado:', { email, id: userDoc.id });
+
+    // Verificar senha
+    const senhaValida = await bcrypt.compare(senha, userData.senha);
+    
+    if (!senhaValida) {
+      console.log('❌ Senha inválida para:', email);
+      return res.status(401).json({
+        success: false,
+        error: 'Credenciais inválidas',
+        message: 'Email ou senha incorretos'
+      });
+    }
+
+    console.log('✅ Login bem-sucedido para:', email);
+
+    // Retornar dados do usuário (sem senha)
+    const { senha: _, ...userInfo } = userData;
+    
+    res.json({
+      success: true,
+      user: {
+        id: userDoc.id,
+        ...userInfo
+      },
+      message: 'Login realizado com sucesso'
+    });
+
   } catch (error) {
     console.error('Erro no login:', error);
     res.status(500).json({
       success: false,
-      error: 'Erro interno do servidor'
+      error: 'Erro interno do servidor',
+      message: error.message
     });
   }
 }; 

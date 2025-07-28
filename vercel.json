@@ -8,6 +8,9 @@
     "api/auth/login.js": {
       "maxDuration": 30
     },
+    "api/auth/register.js": {
+      "maxDuration": 30
+    },
     "api/notas.js": {
       "maxDuration": 30
     },
@@ -15,6 +18,9 @@
       "maxDuration": 30
     },
     "api/categorias.js": {
+      "maxDuration": 30
+    },
+    "api/test-firebase.js": {
       "maxDuration": 30
     }
   },
