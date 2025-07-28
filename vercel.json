@@ -28,6 +28,9 @@
     },
     "api/test-login.js": {
       "maxDuration": 30
+    },
+    "api/test-firebase-config.js": {
+      "maxDuration": 30
     }
   }
 } 
