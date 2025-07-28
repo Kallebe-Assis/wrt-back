@@ -1,14 +1,9 @@
-export default function handler(req, res) {
-  // Configurar CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, user-id, X-Requested-With');
+const { setupCORS } = require('./cors');
 
-  // Responder a requisições OPTIONS (preflight)
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+module.exports = async function handler(req, res) {
+  // Configurar CORS
+  const corsHandled = setupCORS(req, res);
+  if (corsHandled) return;
 
   // Apenas GET permitido
   if (req.method !== 'GET') {

@@ -1,13 +1,9 @@
+const { setupCORS } = require('./cors');
+
 module.exports = async function handler(req, res) {
-  // Permitir CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+  // Configurar CORS
+  const corsHandled = setupCORS(req, res);
+  if (corsHandled) return;
   
   try {
     res.json({
