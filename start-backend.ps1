@@ -2,7 +2,7 @@
 Write-Host "🚀 Iniciando backend WRTmind..." -ForegroundColor Green
 
 # Navegar para o diretório do backend
-Set-Location "WRT-Back"
+Set-Location "WRT-Back-Clean"
 
 # Verificar se o package.json existe
 if (Test-Path "package.json") {
@@ -15,9 +15,10 @@ if (Test-Path "package.json") {
     }
     
     # Iniciar o servidor
-    Write-Host "🔄 Iniciando servidor..." -ForegroundColor Yellow
+    Write-Host "🔄 Iniciando servidor na porta 5000..." -ForegroundColor Yellow
+    Write-Host "📡 URL: http://localhost:5000/api" -ForegroundColor Cyan
     npm start
 } else {
-    Write-Host "❌ Package.json não encontrado no diretório WRT-Back" -ForegroundColor Red
+    Write-Host "❌ Package.json não encontrado no diretório WRT-Back-Clean" -ForegroundColor Red
     Write-Host "💡 Verifique se você está no diretório correto" -ForegroundColor Yellow
 } 

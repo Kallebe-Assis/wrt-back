@@ -152,27 +152,6 @@ class NotaFirebase {
         console.error('❌ Firebase - Erro: Nota não foi salva corretamente');
         throw new Error('Falha ao salvar nota no Firebase');
       }
-      
-      const novaNota = {
-        id: docRef.id,
-        titulo: dados.titulo,
-        conteudo: dados.conteudo,
-        topico: dados.topico || 'Geral',
-        userId: dados.userId,
-        favorito: dados.favorito || false,
-        fixado: dados.fixado || false,
-        ordenacao: dados.ordenacao || 0,
-        dataCriacao: new Date().toISOString(),
-        dataModificacao: new Date().toISOString(),
-        ativo: true
-      };
-      
-      console.log('📝 NotaFirebase.criar - Nota a ser salva:', novaNota);
-      
-      await docRef.set(novaNota);
-      console.log('✅ NotaFirebase.criar - Nota salva com sucesso no Firestore');
-      
-      return novaNota;
     } catch (error) {
       console.error('❌ NotaFirebase.criar - Erro:', error.message);
       throw error;

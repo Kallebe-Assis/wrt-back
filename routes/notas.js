@@ -18,8 +18,8 @@ const validateNota = [
   body('topico')
     .optional()
     .trim()
-    .isLength({ min: 1, max: 50 })
-    .withMessage('Tópico deve ter entre 1 e 50 caracteres')
+    .isLength({ min: 0, max: 50 })
+    .withMessage('Tópico deve ter no máximo 50 caracteres')
 ];
 
 // GET /api/notas - Listar todas as notas do usuário

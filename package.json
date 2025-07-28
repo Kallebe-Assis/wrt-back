@@ -1,17 +1,43 @@
 {
-  "name": "wrt-back",
-  "version": "1.0.0",
-  "description": "Backend simples para WRTmind",
-  "main": "server.js",
+  "name": "wrtmind-backend",
+  "version": "2.0.0",
+  "description": "Backend API para o sistema WRTmind - Gerenciamento de notas e links pessoais",
+  "main": "backend-zero.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node backend-zero.js",
+    "dev": "nodemon backend-zero.js",
+    "quick": "node start-quick.js",
+    "setup": "node setup.js",
+    "test": "echo \"No tests specified\" && exit 0",
+    "build": "echo \"No build required\" && exit 0"
   },
+  "keywords": [
+    "wrtmind",
+    "notes",
+    "links",
+    "firebase",
+    "express",
+    "api"
+  ],
+  "author": "WRTmind Team",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
-    "firebase-admin": "^12.7.0"
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "firebase-admin": "^11.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "compression": "^1.7.4",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

@@ -1,177 +1,306 @@
-# 🔧 WRTmind Backend
+# 🚀 WRTmind - Sistema de Gerenciamento de Notas e Links
 
-Backend API para o projeto WRTmind com autenticação Firebase e sistema de notas/links.
+## 📋 Visão Geral
 
-## 🚀 Setup Rápido
+O WRTmind é um sistema completo de gerenciamento de notas e links pessoais, desenvolvido com **Node.js/Express** no backend e **React** no frontend, utilizando **Firebase** como banco de dados.
 
-### **1. Clone e Instale**
-```bash
-git clone <seu-repositorio>
-cd WRT-Back
-npm install
-```
+## 🏗️ Arquitetura do Sistema
 
-### **2. Configure as Credenciais**
-```bash
-npm run setup
-```
+### Backend (WRT-Back-Clean)
+- **Framework**: Node.js + Express
+- **Banco de Dados**: Firebase Firestore
+- **Autenticação**: JWT + Firebase Auth
+- **Porta**: 5000 (desenvolvimento)
 
-O script irá te guiar para configurar:
-- ✅ Firebase Service Account
-- ✅ Variáveis de ambiente
-- ✅ Chaves de segurança
-
-### **3. Execute o Projeto**
-```bash
-npm start
-```
-
-Acesse: http://localhost:3001
-
-## 🔐 Configuração Manual
-
-Se preferir configurar manualmente:
-
-### **A. Firebase Service Account**
-1. Vá para [Console do Firebase](https://console.firebase.google.com/)
-2. Selecione seu projeto
-3. **Configurações** > **Contas de serviço**
-4. **Gerar nova chave privada**
-5. Baixe e renomeie para `wrtmin-service-account.json`
-6. Coloque na raiz do projeto
-
-### **B. Variáveis de Ambiente**
-```bash
-cp config.example.env config.env
-```
-
-Edite `config.env`:
-```env
-PORT=3001
-NODE_ENV=development
-FIREBASE_PROJECT_ID=seu-projeto-id
-FIREBASE_PRIVATE_KEY="sua-chave-privada"
-FIREBASE_CLIENT_EMAIL=seu-email@projeto.iam.gserviceaccount.com
-JWT_SECRET=sua-chave-jwt
-SESSION_SECRET=sua-chave-sessao
-```
+### Frontend (WRT-Front)
+- **Framework**: React 18
+- **Estilização**: Styled Components
+- **Ícones**: FontAwesome
+- **Porta**: 3000 (desenvolvimento)
 
 ## 📁 Estrutura do Projeto
 
 ```
-WRT-Back/
-├── config/
-│   └── firebase.js          # Configuração Firebase
-├── models/                  # Modelos de dados
-│   ├── NotaFirebase.js
-│   ├── LinkFirebase.js
-│   └── UserFirebase.js
-├── routes/                  # Rotas da API
-│   ├── auth.js
-│   ├── notas.js
-│   ├── links.js
-│   └── topicos.js
-├── middleware/              # Middlewares
-├── scripts/                 # Scripts utilitários
-├── setup-credentials.js     # Script de configuração
-├── config.example.env       # Exemplo de variáveis
-├── wrtmin-service-account.example.json  # Exemplo de credenciais
-└── .gitignore              # Arquivos ignorados
+WRTmind/
+├── WRT-Back-Clean/          # Backend principal
+│   ├── backend-zero.js      # Servidor principal
+│   ├── api/                 # Rotas da API
+│   ├── models/              # Modelos de dados
+│   ├── middleware/          # Middlewares
+│   ├── config/              # Configurações
+│   └── firebase/            # Configuração Firebase
+└── WRT-Front/              # Frontend React
+    ├── src/
+    │   ├── components/      # Componentes React
+    │   ├── context/         # Context API
+    │   ├── hooks/           # Custom Hooks
+    │   ├── config/          # Configurações
+    │   └── styles/          # Estilos globais
+    └── public/              # Arquivos estáticos
 ```
 
-## 🔌 Endpoints da API
+## 🚀 Como Executar o Sistema
 
-### **Autenticação**
-- `POST /auth/register` - Registrar usuário
-- `POST /auth/login` - Login
-- `POST /auth/logout` - Logout
+### Pré-requisitos
+- Node.js 16+ 
+- npm ou yarn
+- Conta Firebase (para banco de dados)
 
-### **Notas**
-- `GET /notas` - Listar notas
-- `POST /notas` - Criar nota
-- `PUT /notas/:id` - Atualizar nota
-- `DELETE /notas/:id` - Deletar nota
-
-### **Links**
-- `GET /links` - Listar links
-- `POST /links` - Criar link
-- `PUT /links/:id` - Atualizar link
-- `DELETE /links/:id` - Deletar link
-
-### **Tópicos**
-- `GET /topicos` - Listar tópicos
-- `POST /topicos` - Criar tópico
-- `PUT /topicos/:id` - Atualizar tópico
-- `DELETE /topicos/:id` - Deletar tópico
-
-## 🛠️ Scripts Disponíveis
+### 1. Configuração do Backend
 
 ```bash
-npm run setup          # Configurar credenciais
-npm run dev           # Desenvolvimento com nodemon
-npm start             # Produção
-npm run migrate       # Migrar dados para Firebase
-npm run test:firebase # Testar conexão Firebase
+# Navegar para o backend
+cd WRT-Back-Clean
+
+# Instalar dependências
+npm install
+
+# Configurar variáveis de ambiente
+cp config.example.env config.env
 ```
+
+**Editar `config.env`:**
+```env
+# Firebase Configuration
+FIREBASE_PROJECT_ID=seu-projeto-firebase
+FIREBASE_PRIVATE_KEY="sua-chave-privada"
+FIREBASE_CLIENT_EMAIL=seu-email@projeto.iam.gserviceaccount.com
+
+# Server Configuration
+PORT=5000
+NODE_ENV=development
+
+# JWT Secret
+JWT_SECRET=seu-jwt-secret-super-seguro
+```
+
+### 2. Configuração do Frontend
+
+```bash
+# Navegar para o frontend
+cd WRT-Front
+
+# Instalar dependências
+npm install
+
+# Configurar API URL
+# Editar src/config/environment.js
+```
+
+**Editar `src/config/environment.js`:**
+```javascript
+export const getApiUrl = (endpoint) => {
+  const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  return `${baseUrl}/api${endpoint}`;
+};
+```
+
+### 3. Iniciar o Sistema
+
+**Terminal 1 - Backend:**
+```bash
+cd WRT-Back-Clean
+npm start
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd WRT-Front
+npm start
+```
+
+## 🔧 Funcionalidades Principais
+
+### 📝 Sistema de Notas
+- ✅ Criar, editar, excluir notas
+- ✅ Categorização de notas
+- ✅ Tópicos para organização
+- ✅ Busca e filtros
+- ✅ Lixeira com restauração
+- ✅ Auto-save (desabilitado por padrão)
+
+### 🔗 Sistema de Links
+- ✅ Gerenciamento de links favoritos
+- ✅ Categorização de links
+- ✅ Interface de atalhos na tela inicial
+- ✅ Drag & drop para reordenação
+- ✅ Sincronização automática
+
+### 👤 Sistema de Usuários
+- ✅ Registro e login
+- ✅ Autenticação JWT
+- ✅ Perfis de usuário
+- ✅ Dados isolados por usuário
+
+### 🎨 Interface
+- ✅ Design responsivo
+- ✅ Tema escuro/claro
+- ✅ Modal de tela cheia
+- ✅ Menu lateral retrátil
+- ✅ Animações suaves
+
+## 📊 Estrutura de Dados
+
+### Nota
+```javascript
+{
+  id: string,
+  titulo: string,        // Título da nota
+  conteudo: string,      // Conteúdo da nota
+  topico: string,        // Tópico (opcional)
+  categoria: string,     // Categoria (opcional)
+  userId: string,        // ID do usuário
+  ativo: boolean,        // Soft delete
+  dataCriacao: string,   // ISO date
+  dataModificacao: string // ISO date
+}
+```
+
+### Link
+```javascript
+{
+  id: string,
+  nome: string,          // Nome do link
+  url: string,           // URL do link
+  urlImagem: string,     // URL da imagem
+  categoria: string,     // Categoria
+  userId: string,        // ID do usuário
+  posicao: number,       // Posição na tela inicial
+  ativo: boolean         // Soft delete
+}
+```
+
+## 🔌 APIs Principais
+
+### Notas
+- `GET /api/notas` - Listar notas
+- `POST /api/notas` - Criar nota
+- `PUT /api/notas/:id` - Atualizar nota
+- `DELETE /api/notas/:id` - Excluir nota
+
+### Links
+- `GET /api/links` - Listar links
+- `POST /api/links` - Criar link
+- `PUT /api/links/:id` - Atualizar link
+- `DELETE /api/links/:id` - Excluir link
+
+### Autenticação
+- `POST /api/auth/register` - Registrar usuário
+- `POST /api/auth/login` - Login
+- `POST /api/auth/logout` - Logout
+
+## 🛠️ Desenvolvimento
+
+### Scripts Disponíveis
+
+**Backend:**
+```bash
+npm start          # Iniciar servidor
+npm run dev        # Modo desenvolvimento (nodemon)
+```
+
+**Frontend:**
+```bash
+npm start          # Iniciar servidor de desenvolvimento
+npm run build      # Build para produção
+npm test           # Executar testes
+```
+
+### Estrutura de Desenvolvimento
+
+1. **Backend**: Desenvolvido em `backend-zero.js` (arquivo único)
+2. **Frontend**: Componentes modulares em React
+3. **Banco**: Firebase Firestore para persistência
+4. **Autenticação**: JWT + Firebase Auth
 
 ## 🔒 Segurança
 
-### **Arquivos Protegidos (.gitignore)**
-- ❌ `wrtmin-service-account.json` (credenciais reais)
-- ❌ `config.env` (variáveis reais)
-- ❌ `*.key`, `*.pem` (chaves privadas)
-- ❌ `node_modules/` (dependências)
+- ✅ Autenticação JWT
+- ✅ Validação de dados
+- ✅ Isolamento de dados por usuário
+- ✅ Sanitização de inputs
+- ✅ Headers de segurança
+- ✅ Rate limiting (configurável)
 
-### **Arquivos Seguros (commitados)**
-- ✅ `wrtmin-service-account.example.json` (exemplo)
-- ✅ `config.example.env` (exemplo)
-- ✅ Código fonte
-- ✅ Documentação
+## 📈 Performance
 
-## 🚨 Troubleshooting
+- ✅ Lazy loading de componentes
+- ✅ Otimização de imagens
+- ✅ Cache de dados
+- ✅ Compressão de respostas
+- ✅ Paginação de resultados
 
-### **Erro: "Firebase service account not found"**
+## 🐛 Troubleshooting
+
+### Problemas Comuns
+
+1. **Erro de conexão com Firebase**
+   - Verificar credenciais no `config.env`
+   - Verificar regras do Firestore
+
+2. **Erro de CORS**
+   - Verificar configuração no backend
+   - Verificar URL da API no frontend
+
+3. **Erro de autenticação**
+   - Verificar JWT_SECRET
+   - Verificar token no localStorage
+
+4. **Notas não salvando**
+   - Verificar estrutura de dados
+   - Verificar validações no backend
+
+### Logs e Debug
+
 ```bash
-npm run setup
+# Backend logs
+tail -f logs/combined.log
+
+# Frontend logs
+# Verificar console do navegador
 ```
 
-### **Erro: "Invalid private key"**
-- Verifique se a chave está correta
-- Certifique-se de incluir as aspas
+## 🚀 Deploy
 
-### **Erro: "Project ID not found"**
-- Confirme o ID do projeto no Firebase Console
-- Verifique se o projeto existe
-
-### **Erro: "Permission denied"**
-- Verifique as regras do Firestore
-- Confirme se o service account tem permissões
-
-## 📞 Suporte
-
-1. Execute `npm run setup` para configuração automática
-2. Verifique os logs do servidor
-3. Confirme se o Firebase está configurado
-4. Abra uma issue no repositório
-
-## 🔄 Deploy
-
-### **Local**
+### Backend (Vercel)
 ```bash
-npm install
-npm run setup
-npm start
+# Configurar vercel.json
+vercel --prod
 ```
 
-### **Produção**
+### Frontend (Vercel/Netlify)
 ```bash
-npm install --production
-# Configure variáveis de ambiente
-npm start
+npm run build
+# Fazer upload da pasta build
 ```
+
+## 📝 Changelog
+
+### v2.0.0 (Atual)
+- ✅ Sistema de notas completo
+- ✅ Sistema de links completo
+- ✅ Autenticação JWT
+- ✅ Interface moderna
+- ✅ Responsividade
+- ✅ Performance otimizada
+
+### v1.0.0
+- ✅ Sistema básico de notas
+- ✅ Autenticação simples
+- ✅ Interface básica
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature
+3. Commit suas mudanças
+4. Push para a branch
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT.
 
 ---
 
-**⚠️ IMPORTANTE: Nunca commite credenciais reais no GitHub!**
-
-**🎉 Agora seu projeto funciona em qualquer computador com as credenciais configuradas!** 
+**Desenvolvido com ❤️ para organização pessoal** 
