@@ -14,12 +14,7 @@ const config = {
   JWT_SECRET: process.env.JWT_SECRET || 'default-jwt-secret',
   SESSION_SECRET: process.env.SESSION_SECRET || 'default-session-secret',
   
-  // CORS
-  ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS?.split(',') || [
-    'http://localhost:3000',
-    'https://wrtmind.vercel.app',
-    'https://wrt-frontend.vercel.app'
-  ],
+
   
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'),
