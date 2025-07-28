@@ -61,7 +61,7 @@ router.get('/stats', verificarAdmin, async (req, res) => {
     const topicosAdmin = topicosAdminSnapshot.size;
     
     // Buscar todos os usuários
-    const usuariosSnapshot = await db.collection('usuarios').get();
+    const usuariosSnapshot = await db.collection('users').get();
     const totalUsuarios = usuariosSnapshot.size;
     
     // Calcular estatísticas adicionais
@@ -133,7 +133,7 @@ router.get('/users', verificarAdmin, async (req, res) => {
     console.log('🔧 ADMIN - Buscando lista de usuários');
     
     const db = admin.firestore();
-    const usuariosSnapshot = await db.collection('usuarios').get();
+    const usuariosSnapshot = await db.collection('users').get();
     
     const usuarios = usuariosSnapshot.docs.map(doc => ({
       id: doc.id,
