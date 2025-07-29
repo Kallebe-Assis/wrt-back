@@ -13,7 +13,6 @@ const validateCadastro = [
     .withMessage('Nome deve ter entre 2 e 100 caracteres'),
   body('email')
     .isEmail()
-    .normalizeEmail()
     .withMessage('Email deve ser válido'),
   body('senha')
     .isLength({ min: 6 })
@@ -24,7 +23,6 @@ const validateCadastro = [
 const validateLogin = [
   body('email')
     .isEmail()
-    .normalizeEmail()
     .withMessage('Email deve ser válido'),
   body('senha')
     .notEmpty()
@@ -58,6 +56,7 @@ router.post('/cadastro', validateCadastro, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
+        success: false,
         error: 'Dados inválidos',
         details: errors.array()
       });
@@ -72,15 +71,16 @@ router.post('/cadastro', validateCadastro, async (req, res) => {
     });
 
     res.status(201).json({
+      success: true,
       message: 'Usuário cadastrado com sucesso',
       usuario: novoUsuario
     });
   } catch (error) {
     console.error('Erro ao cadastrar usuário:', error);
     if (error.message.includes('já cadastrado')) {
-      return res.status(409).json({ error: 'Email já cadastrado' });
+      return res.status(409).json({ success: false, error: 'Email já cadastrado' });
     }
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    res.status(500).json({ success: false, error: 'Erro interno do servidor' });
   }
 });
 
@@ -93,6 +93,7 @@ router.post('/login', validateLogin, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
+        success: false,
         error: 'Dados inválidos',
         details: errors.array()
       });
@@ -103,16 +104,17 @@ router.post('/login', validateLogin, async (req, res) => {
     const usuario = await userModel.autenticar(email, senha);
     
     if (!usuario) {
-      return res.status(401).json({ error: 'Email ou senha incorretos' });
+      return res.status(401).json({ success: false, error: 'Email ou senha incorretos' });
     }
 
     res.json({
+      success: true,
       message: 'Login realizado com sucesso',
       usuario
     });
   } catch (error) {
     console.error('Erro ao fazer login:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    res.status(500).json({ success: false, error: 'Erro interno do servidor' });
   }
 });
 

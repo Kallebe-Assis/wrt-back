@@ -104,10 +104,11 @@ class LinkPersistent {
       erros.push('Nome é obrigatório');
     }
     
-    if (!dados.urlIcone || dados.urlIcone.trim() === '') {
-      erros.push('URL do ícone é obrigatória');
-    } else if (!this.isValidUrl(dados.urlIcone)) {
-      erros.push('URL do ícone deve ser uma URL válida');
+    // urlIcone é opcional, mas se fornecido deve ser uma URL válida
+    if (dados.urlIcone && dados.urlIcone.trim() !== '') {
+      if (!this.isValidUrl(dados.urlIcone)) {
+        erros.push('URL do ícone deve ser uma URL válida');
+      }
     }
     
     if (!dados.urlDestino || dados.urlDestino.trim() === '') {

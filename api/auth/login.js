@@ -65,14 +65,18 @@ module.exports = async function handler(req, res) {
     // Retornar dados do usuário (sem senha)
     const { senha: _, ...userInfo } = userData;
     
-    res.json({
+    const responseData = {
       success: true,
-      user: {
+      usuario: {
         id: userDoc.id,
         ...userInfo
       },
       message: 'Login realizado com sucesso'
-    });
+    };
+    
+    console.log('📤 Enviando resposta:', responseData);
+    
+    res.json(responseData);
 
   } catch (error) {
     console.error('Erro no login:', error);

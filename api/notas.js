@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
         });
       }
       
-      const notasQuery = await db.collection('notas').where('userId', '==', userId).get();
+      const notasQuery = await db.collection('notas').where('userId', '==', userId).where('ativo', '==', true).get();
       const notas = [];
       
       notasQuery.forEach(doc => {
@@ -40,7 +40,7 @@ module.exports = async function handler(req, res) {
     
     // POST - Criar nota
     else if (method === 'POST') {
-      const { titulo, conteudo, userId } = req.body;
+      const { titulo, conteudo, userId, topico } = req.body;
       
       if (!titulo || !conteudo || !userId) {
         return res.status(400).json({ 
@@ -53,6 +53,8 @@ module.exports = async function handler(req, res) {
         titulo,
         conteudo,
         userId,
+        topico: topico || null,
+        ativo: true,
         dataCriacao: new Date().toISOString(),
         dataModificacao: new Date().toISOString()
       });
@@ -63,7 +65,9 @@ module.exports = async function handler(req, res) {
           id: docRef.id,
           titulo,
           conteudo,
-          userId
+          userId,
+          topico: topico || null,
+          ativo: true
         },
         message: 'Nota criada com sucesso'
       });
@@ -72,7 +76,7 @@ module.exports = async function handler(req, res) {
     // PUT - Atualizar nota
     else if (method === 'PUT') {
       const { id } = req.query;
-      const { titulo, conteudo } = req.body;
+      const { titulo, conteudo, topico } = req.body;
       
       if (!id || !titulo || !conteudo) {
         return res.status(400).json({ 
@@ -84,6 +88,7 @@ module.exports = async function handler(req, res) {
       await db.collection('notas').doc(id).update({
         titulo,
         conteudo,
+        topico: topico || null,
         dataModificacao: new Date().toISOString()
       });
       
@@ -93,7 +98,7 @@ module.exports = async function handler(req, res) {
       });
     }
     
-    // DELETE - Deletar nota
+    // DELETE - Deletar nota (soft delete)
     else if (method === 'DELETE') {
       const { id } = req.query;
       
@@ -104,7 +109,10 @@ module.exports = async function handler(req, res) {
         });
       }
       
-      await db.collection('notas').doc(id).delete();
+      await db.collection('notas').doc(id).update({
+        ativo: false,
+        dataModificacao: new Date().toISOString()
+      });
       
       res.json({
         success: true,

@@ -81,21 +81,21 @@ router.get('/topicos', async (req, res) => {
   }
 });
 
-// GET /api/notas/favoritas - Buscar notas favoritas (DESABILITADO)
-// router.get('/favoritas', async (req, res) => {
-//   try {
-//     const userId = req.headers['user-id'];
-//     if (!userId) {
-//       return res.status(401).json({ error: 'ID do usuário não fornecido' });
-//     }
-//     
-//     const notas = await notaModel.buscarFavoritas(userId);
-//     res.json({ notas });
-//   } catch (error) {
-//     console.error('Erro ao buscar notas favoritas:', error);
-//     res.status(500).json({ error: 'Erro ao buscar notas favoritas' });
-//   }
-// });
+// GET /api/notas/favoritas - Buscar notas favoritas
+router.get('/favoritas', async (req, res) => {
+  try {
+    const userId = req.headers['user-id'];
+    if (!userId) {
+      return res.status(401).json({ error: 'ID do usuário não fornecido' });
+    }
+    
+    const notas = await notaModel.buscarFavoritas(userId);
+    res.json({ notas });
+  } catch (error) {
+    console.error('Erro ao buscar notas favoritas:', error);
+    res.status(500).json({ error: 'Erro ao buscar notas favoritas' });
+  }
+});
 
 // GET /api/notas/fixadas - Buscar notas fixadas
 router.get('/fixadas', async (req, res) => {
@@ -286,28 +286,28 @@ router.delete('/:id/permanent', async (req, res) => {
   }
 });
 
-// PATCH /api/notas/:id/favorito - Alternar favorito (DESABILITADO)
-// router.patch('/:id/favorito', async (req, res) => {
-//   try {
-//     const userId = req.headers['user-id'];
-//     if (!userId) {
-//       return res.status(401).json({ error: 'ID do usuário não fornecido' });
-//     }
-//     
-//     const nota = await notaModel.alternarFavorito(req.params.id, userId);
-//     
-//     res.json({ 
-//       message: `Nota ${nota.favorito ? 'adicionada aos' : 'removida dos'} favoritos`,
-//       nota
-//     });
-//   } catch (error) {
-//     console.error('Erro ao alternar favorito:', error);
-//     if (error.message.includes('não encontrada') || error.message.includes('não autorizada')) {
-//       return res.status(404).json({ error: 'Nota não encontrada' });
-//     }
-//     res.status(500).json({ error: 'Erro ao alternar favorito' });
-//   }
-// });
+// PATCH /api/notas/:id/favorito - Alternar favorito
+router.patch('/:id/favorito', async (req, res) => {
+  try {
+    const userId = req.headers['user-id'];
+    if (!userId) {
+      return res.status(401).json({ error: 'ID do usuário não fornecido' });
+    }
+    
+    const nota = await notaModel.alternarFavorito(req.params.id, userId);
+    
+    res.json({ 
+      message: `Nota ${nota.favorito ? 'adicionada aos' : 'removida dos'} favoritos`,
+      nota
+    });
+  } catch (error) {
+    console.error('Erro ao alternar favorito:', error);
+    if (error.message.includes('não encontrada') || error.message.includes('não autorizada')) {
+      return res.status(404).json({ error: 'Nota não encontrada' });
+    }
+    res.status(500).json({ error: 'Erro ao alternar favorito' });
+  }
+});
 
 // PATCH /api/notas/:id/fixado - Alternar fixado
 router.patch('/:id/fixado', async (req, res) => {

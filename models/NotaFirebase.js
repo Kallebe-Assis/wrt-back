@@ -391,6 +391,102 @@ class NotaFirebase {
   async buscarFixadas(userId) {
     return this.buscarTodasPorUsuario(userId, { fixado: true });
   }
+
+  // Buscar notas favoritas do usuário
+  async buscarFavoritas(userId) {
+    try {
+      console.log('🔥 Firebase - Buscando notas favoritas para usuário:', userId);
+      
+      const snapshot = await this.db.collection(this.collection)
+        .where('userId', '==', userId)
+        .where('ativo', '==', true)
+        .where('favorito', '==', true)
+        .get();
+      
+      console.log('✅ Firebase - Query de favoritas executada');
+      console.log('📊 Firebase - Total de favoritas encontradas:', snapshot.size);
+      
+      const notas = [];
+      snapshot.forEach(doc => {
+        const nota = {
+          id: doc.id,
+          ...doc.data()
+        };
+        notas.push(nota);
+        console.log('❤️ Firebase - Favorita encontrada:', { id: doc.id, titulo: nota.titulo });
+      });
+
+      // Ordenar: primeiro fixadas, depois por ordenação, depois por data de criação
+      const notasOrdenadas = notas.sort((a, b) => {
+        // Primeiro: fixadas no topo
+        if (a.fixado && !b.fixado) return -1;
+        if (!a.fixado && b.fixado) return 1;
+        
+        // Segundo: por ordenação (menor número primeiro)
+        if (a.ordenacao !== b.ordenacao) {
+          return (a.ordenacao || 0) - (b.ordenacao || 0);
+        }
+        
+        // Terceiro: por data de criação (mais recente primeiro)
+        return new Date(b.dataCriacao) - new Date(a.dataCriacao);
+      });
+      
+      console.log('✅ Firebase - Busca de favoritas concluída. Notas retornadas:', notasOrdenadas.length);
+      return notasOrdenadas;
+    } catch (error) {
+      console.error('❌ Firebase - Erro ao buscar notas favoritas:', error.message);
+      console.error('❌ Firebase - Stack trace:', error.stack);
+      return [];
+    }
+  }
+
+  // Alternar favorito de uma nota
+  async alternarFavorito(id, userId) {
+    try {
+      console.log('🔥 Firebase - Alternando favorito para nota:', id);
+      console.log('👤 Firebase - Usuário:', userId);
+      
+      // Buscar a nota atual
+      const doc = await this.db.collection(this.collection).doc(id).get();
+      
+      if (!doc.exists) {
+        throw new Error('Nota não encontrada');
+      }
+      
+      const nota = doc.data();
+      
+      // Verificar se a nota pertence ao usuário
+      if (nota.userId !== userId) {
+        throw new Error('Nota não autorizada para este usuário');
+      }
+      
+      // Inverter o status de favorito
+      const novoFavorito = !nota.favorito;
+      
+      console.log('🔄 Firebase - Status atual de favorito:', nota.favorito);
+      console.log('🔄 Firebase - Novo status de favorito:', novoFavorito);
+      
+      // Atualizar no Firestore
+      await this.db.collection(this.collection).doc(id).update({
+        favorito: novoFavorito,
+        dataModificacao: new Date().toISOString()
+      });
+      
+      console.log('✅ Firebase - Favorito alternado com sucesso');
+      
+      // Retornar a nota atualizada
+      return {
+        id: doc.id,
+        ...nota,
+        favorito: novoFavorito,
+        dataModificacao: new Date().toISOString()
+      };
+    } catch (error) {
+      console.error('❌ Firebase - Erro ao alternar favorito:', error.message);
+      console.error('❌ Firebase - Stack trace:', error.stack);
+      throw error;
+    }
+  }
 }
 
 module.exports = NotaFirebase; 

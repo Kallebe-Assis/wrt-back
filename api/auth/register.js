@@ -65,7 +65,7 @@ module.exports = async function handler(req, res) {
 
     res.status(201).json({
       success: true,
-      user: {
+      usuario: {
         id: docRef.id,
         ...userInfo
       },

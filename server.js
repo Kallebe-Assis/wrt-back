@@ -1,5 +1,6 @@
 const express = require('express');
 const admin = require('firebase-admin');
+const bcrypt = require('bcryptjs');
 
 // Inicializar Firebase
 const serviceAccount = require('./wrtmin-service-account.json');
@@ -14,6 +15,19 @@ const PORT = 5000;
 // Middleware básico
 app.use(express.json());
 
+// Middleware CORS
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, user-id');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 // Rota de teste
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API funcionando!' });
@@ -21,11 +35,19 @@ app.get('/api/test', (req, res) => {
 
 // Rota de login
 app.post('/api/auth/login', async (req, res) => {
+  console.log('🔐 Requisição de login recebida:', { 
+    body: req.body,
+    headers: req.headers,
+    method: req.method,
+    url: req.url
+  });
+  
   try {
     const { email, senha } = req.body;
     
     // Validar dados
     if (!email || !senha) {
+      console.log('❌ Dados inválidos:', { email: !!email, senha: !!senha });
       return res.status(400).json({ 
         success: false, 
         error: 'Email e senha obrigatórios' 
@@ -45,8 +67,9 @@ app.post('/api/auth/login', async (req, res) => {
     const userDoc = userQuery.docs[0];
     const userData = userDoc.data();
     
-    // Verificar senha
-    if (userData.senha !== senha) {
+    // Verificar senha com bcrypt
+    const senhaValida = await bcrypt.compare(senha, userData.senha);
+    if (!senhaValida) {
       return res.status(401).json({ 
         success: false, 
         error: 'Senha incorreta' 
@@ -96,11 +119,15 @@ app.post('/api/auth/register', async (req, res) => {
       });
     }
     
+    // Hash da senha
+    const saltRounds = 12;
+    const senhaHash = await bcrypt.hash(senha, saltRounds);
+    
     // Criar usuário
     const docRef = await db.collection('users').add({
       nome,
       email,
-      senha,
+      senha: senhaHash,
       dataCriacao: new Date().toISOString()
     });
     
