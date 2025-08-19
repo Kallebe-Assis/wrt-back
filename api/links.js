@@ -45,8 +45,11 @@ module.exports = async function handler(req, res) {
       console.log('📝 Buscando links:', { userId, limit, offset, search, categoria, favorito });
       
       try {
-        // Query simples sem índices compostos
-        const snapshot = await db.collection('links').where('userId', '==', userId).get();
+        // Query simples sem índices compostos - filtrar apenas links ativos
+        const snapshot = await db.collection('links')
+          .where('userId', '==', userId)
+          .where('ativo', '==', true)
+          .get();
         const todosLinks = [];
         
         snapshot.forEach(doc => {

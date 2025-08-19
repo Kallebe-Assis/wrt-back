@@ -32,8 +32,11 @@ module.exports = async function handler(req, res) {
       console.log('📝 Buscando notas:', { userId, favoritas, topico, limit, offset });
       
       try {
-        // Query simples sem índices compostos
-        const snapshot = await db.collection('notas').where('userId', '==', userId).get();
+        // Query simples sem índices compostos - filtrar apenas notas ativas
+        const snapshot = await db.collection('notas')
+          .where('userId', '==', userId)
+          .where('ativo', '==', true)
+          .get();
         const todasNotas = [];
         
         snapshot.forEach(doc => {
