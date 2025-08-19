@@ -1,0 +1,113 @@
+{
+  "version": 2,
+  "buildCommand": null,
+  "outputDirectory": null,
+  "installCommand": "npm ci --only=production",
+  "framework": null,
+  "functions": {
+    "api/auth/login.js": {
+      "maxDuration": 15,
+      "memory": 512
+    },
+    "api/auth/register.js": {
+      "maxDuration": 15,
+      "memory": 512
+    },
+    "api/notas.js": {
+      "maxDuration": 10,
+      "memory": 256
+    },
+    "api/notas-optimized.js": {
+      "maxDuration": 5,
+      "memory": 256
+    },
+    "api/notas/[id].js": {
+      "maxDuration": 10,
+      "memory": 256
+    },
+    "api/links.js": {
+      "maxDuration": 10,
+      "memory": 256
+    },
+    "api/links-optimized.js": {
+      "maxDuration": 5,
+      "memory": 256
+    },
+    "api/links/[id].js": {
+      "maxDuration": 10,
+      "memory": 256
+    },
+    "api/categorias.js": {
+      "maxDuration": 10,
+      "memory": 256
+    },
+    "api/categorias/[id].js": {
+      "maxDuration": 10,
+      "memory": 256
+    },
+    "api/admin.js": {
+      "maxDuration": 30,
+      "memory": 512
+    },
+    "api/sync.js": {
+      "maxDuration": 10,
+      "memory": 256
+    },
+    "api/sync/status.js": {
+      "maxDuration": 5,
+      "memory": 256
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://wrt-front.vercel.app"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, user-id, admin-key"
+        },
+        {
+          "key": "Access-Control-Max-Age",
+          "value": "86400"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/health",
+      "destination": "/api/sync/status"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
