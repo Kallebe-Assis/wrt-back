@@ -14,11 +14,23 @@
     "api/notas.js": {
       "maxDuration": 30
     },
+    "api/notas/[id].js": {
+      "maxDuration": 30
+    },
     "api/links.js": {
+      "maxDuration": 30
+    },
+    "api/links/[id].js": {
       "maxDuration": 30
     },
     "api/categorias.js": {
       "maxDuration": 30
+    },
+    "api/categorias/[id].js": {
+      "maxDuration": 30
+    },
+    "api/admin.js": {
+      "maxDuration": 60
     }
   },
   "headers": [
@@ -31,11 +43,11 @@
         },
         {
           "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
+          "value": "GET, POST, PUT, DELETE, PATCH, OPTIONS"
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization, user-id"
+          "value": "Content-Type, Authorization, user-id, admin-key"
         }
       ]
     }
