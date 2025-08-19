@@ -23,14 +23,14 @@
     "api/links/[id].js": {
       "maxDuration": 30
     },
-    "api/categorias.js": {
-      "maxDuration": 30
-    },
-    "api/categorias/[id].js": {
-      "maxDuration": 30
-    },
-    "api/admin.js": {
+    "api/admin-categorias.js": {
       "maxDuration": 60
+    },
+    "api/health.js": {
+      "maxDuration": 10
+    },
+    "api/sync/status.js": {
+      "maxDuration": 10
     }
   },
   "headers": [
