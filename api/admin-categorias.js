@@ -97,47 +97,54 @@ module.exports = async function handler(req, res) {
         
         console.log('🏷️ Buscando categorias com filtros:', { userId, limit, offset, search, cor });
         
-        // Query base otimizada
-        let query = db.collection('categorias')
-          .where('userId', '==', userId)
-          .where('ativo', '==', true)
-          .orderBy('nome', 'asc')
-          .limit(parseInt(limit));
+        // Query simples sem índices compostos - filtrar apenas categorias ativas
+        const snapshot = await db.collection('categorias').where('userId', '==', userId).get();
+        const todasCategorias = [];
         
-        // Filtro por cor
-        if (cor) {
-          query = query.where('cor', '==', cor);
-        }
-        
-        const categoriasQuery = await query.get();
-        const categorias = [];
-        
-        categoriasQuery.forEach(doc => {
-          const categoriaData = {
+        snapshot.forEach(doc => {
+          const categoria = {
             id: doc.id,
             ...doc.data()
           };
-          
-          // Filtro de busca local (se aplicável)
-          if (search) {
-            const searchLower = search.toLowerCase();
-            const nomeMatch = categoriaData.nome && categoriaData.nome.toLowerCase().includes(searchLower);
-            const descricaoMatch = categoriaData.descricao && categoriaData.descricao.toLowerCase().includes(searchLower);
-            
-            if (nomeMatch || descricaoMatch) {
-              categorias.push(categoriaData);
-            }
-          } else {
-            categorias.push(categoriaData);
+          // Filtrar apenas categorias ativas
+          if (categoria.ativo !== false) {
+            todasCategorias.push(categoria);
           }
         });
         
-        console.log(`✅ ${categorias.length} categorias encontradas para usuário ${userId}`);
+        // Aplicar filtros localmente
+        let categorias = todasCategorias;
+        
+        // Filtro por cor
+        if (cor) {
+          categorias = categorias.filter(cat => cat.cor === cor);
+        }
+        
+        // Filtro de busca local (se aplicável)
+        if (search) {
+          const searchLower = search.toLowerCase();
+          categorias = categorias.filter(cat => {
+            const nomeMatch = cat.nome && cat.nome.toLowerCase().includes(searchLower);
+            const descricaoMatch = cat.descricao && cat.descricao.toLowerCase().includes(searchLower);
+            return nomeMatch || descricaoMatch;
+          });
+        }
+        
+        // Ordenar por nome
+        categorias.sort((a, b) => a.nome.localeCompare(b.nome));
+        
+        // Aplicar paginação
+        const start = parseInt(offset);
+        const end = start + parseInt(limit);
+        const categoriasPaginadas = categorias.slice(start, end);
+        
+        console.log(`✅ ${categoriasPaginadas.length} categorias encontradas para usuário ${userId}`);
         
         res.json({
           success: true,
-          data: categorias,
-          count: categorias.length,
+          data: categoriasPaginadas,
+          count: categoriasPaginadas.length,
+          total: categorias.length,
           limit: parseInt(limit),
           offset: parseInt(offset)
         });
