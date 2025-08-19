@@ -25,48 +25,67 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // GET - Buscar notas com queries otimizadas
+    // GET - Buscar notas (versão simplificada)
     if (method === 'GET') {
       const { favoritas, topico, limit = 50, offset = 0 } = req.query;
       
-      console.log('📝 Buscando notas com filtros:', { userId, favoritas, topico, limit, offset });
+      console.log('📝 Buscando notas:', { userId, favoritas, topico, limit, offset });
       
-      // Query base otimizada
-      let query = db.collection('notas')
-        .where('userId', '==', userId)
-        .where('ativo', '==', true)
-        .orderBy('dataModificacao', 'desc')
-        .limit(parseInt(limit));
-      
-      // Filtro por favoritas
-      if (favoritas === 'true') {
-        query = query.where('favorita', '==', true);
-      }
-      
-      // Filtro por tópico
-      if (topico) {
-        query = query.where('topico', '==', topico);
-      }
-      
-      const notasQuery = await query.get();
-      const notas = [];
-      
-      notasQuery.forEach(doc => {
-        notas.push({
-          id: doc.id,
-          ...doc.data()
+      try {
+        // Query simples sem índices compostos
+        const snapshot = await db.collection('notas').where('userId', '==', userId).get();
+        const todasNotas = [];
+        
+        snapshot.forEach(doc => {
+          const nota = {
+            id: doc.id,
+            ...doc.data()
+          };
+          todasNotas.push(nota);
         });
-      });
-      
-      console.log(`✅ ${notas.length} notas encontradas para usuário ${userId}`);
-      
-      res.json({
-        success: true,
-        notas,
-        total: notas.length,
-        limit: parseInt(limit),
-        offset: parseInt(offset)
-      });
+        
+        // Aplicar filtros localmente
+        let notasFiltradas = todasNotas;
+        
+        if (favoritas === 'true') {
+          notasFiltradas = notasFiltradas.filter(nota => nota.favorita === true);
+        }
+        
+        if (topico) {
+          notasFiltradas = notasFiltradas.filter(nota => nota.topico === topico);
+        }
+        
+        // Ordenar por data de modificação (mais recente primeiro)
+        notasFiltradas.sort((a, b) => {
+          const dataA = new Date(a.dataModificacao || a.dataCriacao || 0);
+          const dataB = new Date(b.dataModificacao || b.dataCriacao || 0);
+          return dataB - dataA;
+        });
+        
+        // Aplicar paginação
+        const start = parseInt(offset);
+        const end = start + parseInt(limit);
+        const notasPaginadas = notasFiltradas.slice(start, end);
+        
+        console.log(`✅ ${notasPaginadas.length} notas retornadas (de ${notasFiltradas.length} total)`);
+        
+        res.json({
+          success: true,
+          notas: notasPaginadas,
+          count: notasPaginadas.length,
+          total: notasFiltradas.length,
+          limit: parseInt(limit),
+          offset: parseInt(offset)
+        });
+        
+      } catch (error) {
+        console.error('❌ Erro ao buscar notas:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Erro interno do servidor',
+          message: error.message
+        });
+      }
     }
     
     // POST - Criar nota otimizada

@@ -38,65 +38,77 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // GET - Listar links com queries otimizadas
+    // GET - Buscar links (versão simplificada)
     if (method === 'GET') {
-      console.log('📝 GET /links - Iniciando listagem de links');
-      console.log('📝 UserId recebido:', userId);
-      
       const { limit = 50, offset = 0, search, categoria, favorito } = req.query;
       
-      console.log('📝 Filtros aplicados:', { limit, offset, search, categoria, favorito });
+      console.log('📝 Buscando links:', { userId, limit, offset, search, categoria, favorito });
       
-      // Query base otimizada
-      let query = db.collection('links')
-        .where('userId', '==', userId)
-        .where('ativo', '==', true)
-        .orderBy('dataModificacao', 'desc')
-        .limit(parseInt(limit));
-      
-      // Aplicar filtros adicionais
-      if (favorito === 'true') {
-        query = query.where('favorito', '==', true);
-      }
-      
-      if (categoria) {
-        query = query.where('categoria', '==', categoria);
-      }
-      
-      const linksQuery = await query.get();
-      const links = [];
-      
-      linksQuery.forEach(doc => {
-        const linkData = {
-          id: doc.id,
-          ...doc.data()
-        };
+      try {
+        // Query simples sem índices compostos
+        const snapshot = await db.collection('links').where('userId', '==', userId).get();
+        const todosLinks = [];
         
-        // Filtro de busca local (se aplicável)
+        snapshot.forEach(doc => {
+          const link = {
+            id: doc.id,
+            ...doc.data()
+          };
+          todosLinks.push(link);
+        });
+        
+        // Aplicar filtros localmente
+        let linksFiltrados = todosLinks;
+        
+        if (favorito === 'true') {
+          linksFiltrados = linksFiltrados.filter(link => link.favorito === true);
+        }
+        
+        if (categoria) {
+          linksFiltrados = linksFiltrados.filter(link => link.categoria === categoria);
+        }
+        
         if (search) {
           const searchLower = search.toLowerCase();
-          const nomeMatch = linkData.nome && linkData.nome.toLowerCase().includes(searchLower);
-          const urlMatch = linkData.url && linkData.url.toLowerCase().includes(searchLower);
-          
-          if (nomeMatch || urlMatch) {
-            links.push(linkData);
-          }
-        } else {
-          links.push(linkData);
+          linksFiltrados = linksFiltrados.filter(link => 
+            link.nome?.toLowerCase().includes(searchLower) ||
+            link.url?.toLowerCase().includes(searchLower)
+          );
         }
-      });
-      
-      console.log('📝 Links encontrados:', links.length);
-      
-      res.json({
-        success: true,
-        data: links,
-        message: `Links do usuário ${userId}`,
-        count: links.length,
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        timestamp: new Date().toISOString()
-      });
+        
+        // Ordenar por data de modificação (mais recente primeiro)
+        linksFiltrados.sort((a, b) => {
+          const dataA = new Date(a.dataModificacao || a.dataCriacao || 0);
+          const dataB = new Date(b.dataModificacao || b.dataCriacao || 0);
+          return dataB - dataA;
+        });
+        
+        // Aplicar paginação
+        const start = parseInt(offset);
+        const end = start + parseInt(limit);
+        const linksPaginados = linksFiltrados.slice(start, end);
+        
+        console.log(`✅ ${linksPaginados.length} links retornados (de ${linksFiltrados.length} total)`);
+        
+        res.json({
+          success: true,
+          data: linksPaginados,
+          message: `Links do usuário ${userId}`,
+          count: linksPaginados.length,
+          total: linksFiltrados.length,
+          limit: parseInt(limit),
+          offset: parseInt(offset),
+          timestamp: new Date().toISOString()
+        });
+        
+      } catch (error) {
+        console.error('❌ Erro ao buscar links:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Erro interno do servidor',
+          message: error.message
+        });
+      }
     }
     
     // POST - Criar link otimizado
