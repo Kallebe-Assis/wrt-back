@@ -7,11 +7,7 @@
     "start": "node backend-zero.js",
     "dev": "nodemon backend-zero.js",
     "quick": "node start-quick.js",
-    "setup": "node setup.js",
-    "test": "node test-api.js",
-    "test-api": "node test-api.js",
-    "test-cors": "node test-cors.js",
-    "test-admin": "node test-admin.js"
+    "setup": "node setup.js"
   },
   "keywords": [
     "wrtmind",
