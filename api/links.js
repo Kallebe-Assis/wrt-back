@@ -178,7 +178,7 @@ module.exports = async function handler(req, res) {
             nome: nome.trim(),
             url: url.trim(),
             imagemUrl: imagemUrl || null,
-            categoria: categoria || null,
+            categoria: categoria || '',
             favorito: Boolean(favorito),
             dataModificacao: new Date().toISOString()
           });
@@ -234,7 +234,7 @@ module.exports = async function handler(req, res) {
           nome: nome.trim(),
           url: url.trim(),
           imagemUrl: imagemUrl || null,
-          categoria: categoria || null,
+          categoria: categoria || '',
           favorito: Boolean(favorito),
           userId,
           ativo: true,
@@ -329,7 +329,7 @@ module.exports = async function handler(req, res) {
           nome: nome.trim(),
           url: url.trim(),
           imagemUrl: imagemUrl || null,
-          categoria: categoria || null,
+          categoria: categoria || '',
           favorito: Boolean(favorito),
           dataModificacao: new Date().toISOString()
         });

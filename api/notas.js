@@ -105,7 +105,7 @@ module.exports = async function handler(req, res) {
         titulo: titulo.trim(),
         conteudo: conteudo.trim(),
         userId,
-        topico: topico || null,
+        topico: topico || '',
         favorita: Boolean(favorita),
         ativo: true,
         dataCriacao: new Date().toISOString(),
@@ -160,7 +160,7 @@ module.exports = async function handler(req, res) {
       const updateData = {
         titulo: titulo.trim(),
         conteudo: conteudo.trim(),
-        topico: topico || null,
+        topico: topico || '',
         dataModificacao: new Date().toISOString()
       };
       
